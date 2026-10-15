@@ -33,7 +33,7 @@ export async function getCustomerByPhone(phone: string) {
 // Staff can look up a member by the 12-character member code (from the QR) or by phone.
 export async function getCustomerByLookup(input: string) {
   const value = input.trim().toUpperCase();
-  if (/^[0-9A-F]{8}$/.test(value)) {
+  if (/^[0-9A-F]{12}$/.test(value)) {
     const [row] = await db
       .select()
       .from(customers)
