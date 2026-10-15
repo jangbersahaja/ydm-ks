@@ -55,7 +55,7 @@ const en = {
     rewardWelcomeTitle: "Welcome voucher",
     rewardWelcomeValue: "Buy 1 free 1",
     rewardWelcomeBody:
-      "Buy 1 free 1 on your next purchase after you register. Valid 30 days.",
+      "Buy one drink, get one free on your next purchase after you register. Valid 30 days.",
     rewardBirthdayTitle: "Birthday treat",
     rewardBirthdayValue: "Free drink",
     rewardBirthdayBody: "A free drink on your birthday. Valid 30 days.",
@@ -463,7 +463,7 @@ const ms: Dict = {
     rewardWelcomeTitle: "Baucar alu-aluan",
     rewardWelcomeValue: "Beli 1 percuma 1",
     rewardWelcomeBody:
-      "Beli 1 percuma 1 pada pembelian seterusnya selepas mendaftar. Sah 30 hari.",
+      "Beli satu minuman, dapat satu percuma pada pembelian seterusnya selepas mendaftar. Sah 30 hari.",
     rewardBirthdayTitle: "Hadiah hari lahir",
     rewardBirthdayValue: "Minuman percuma",
     rewardBirthdayBody: "Minuman percuma pada hari lahir anda. Sah 30 hari.",
