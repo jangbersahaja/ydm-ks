@@ -1,15 +1,29 @@
 "use client";
 
 import { pageWidthClass } from "@/components/ui";
+import {
+  GiftIcon,
+  HistoryIcon,
+  HomeIcon,
+  ListCheckIcon,
+  UserIcon,
+} from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ComponentType } from "react";
 
 export type NavItem = {
   href: string;
   label: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: "home" | "tasks" | "rewards" | "history" | "profile";
 };
+
+const icons = {
+  home: HomeIcon,
+  tasks: ListCheckIcon,
+  rewards: GiftIcon,
+  history: HistoryIcon,
+  profile: UserIcon,
+} as const;
 
 export function BottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -22,7 +36,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
         {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
+          const Icon = icons[item.icon];
           return (
             <li key={item.href} className="min-w-0">
               <Link
