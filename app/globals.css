@@ -7,8 +7,8 @@
   --color-roast: #7a4a2e;
   --color-latte: #d9b99b;
   --color-accent: #b03a2e;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: monospace;
 }
 
 html {

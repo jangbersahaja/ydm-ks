@@ -49,6 +49,14 @@ export function CameraIcon(props: IconProps) {
   );
 }
 
+export function BarcodeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14" />
+    </Svg>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <Svg {...props}>
