@@ -3,6 +3,7 @@
 import { BottomSheet } from "@/components/bottom-sheet";
 import { BarcodeIcon, CloseIcon, VoucherKindIcon } from "@/components/icons";
 import {
+  buttonSmClass,
   cardClass,
   iconButtonClass,
   sectionTitleClass,
