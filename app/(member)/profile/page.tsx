@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n";
 import { requireCustomerId } from "@/lib/session";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const instant = false;
 
@@ -94,6 +95,12 @@ export default async function ProfilePage() {
           {t.profile.logout}
         </SubmitButton>
       </form>
+
+      <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-semibold text-roast">
+        <Link href="/faq">{t.footer.faq}</Link>
+        <Link href="/terms">{t.footer.terms}</Link>
+        <Link href="/privacy">{t.footer.privacy}</Link>
+      </nav>
     </div>
   );
 }

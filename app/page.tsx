@@ -83,7 +83,7 @@ export default async function HomePage() {
   ];
 
   return (
-    <PublicShell>
+    <PublicShell showLegalLinks>
       <section className="grid items-center gap-10 md:grid-cols-2">
         <div className="space-y-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-roast">

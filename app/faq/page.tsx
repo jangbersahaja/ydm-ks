@@ -3,7 +3,6 @@ import { cardClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
 import { getCupsVoucherType } from "@/lib/db/queries";
 import { COMPANY } from "@/lib/legal";
-import Link from "next/link";
 import { connection } from "next/server";
 
 export const instant = false;
@@ -94,15 +93,6 @@ export default async function FaqPage() {
           ))}
         </section>
 
-        <p className="text-sm">
-          <Link href="/terms" className="font-semibold text-roast">
-            Terms & Conditions
-          </Link>
-          {" · "}
-          <Link href="/privacy" className="font-semibold text-roast">
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </PublicShell>
   );

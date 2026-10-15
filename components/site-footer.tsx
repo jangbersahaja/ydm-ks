@@ -3,7 +3,11 @@ import { getT } from "@/lib/i18n";
 import { COMPANY } from "@/lib/legal";
 import Link from "next/link";
 
-export async function SiteFooter() {
+export async function SiteFooter({
+  showLegalLinks = false,
+}: {
+  showLegalLinks?: boolean;
+}) {
   const { t } = await getT();
 
   return (
@@ -18,15 +22,19 @@ export async function SiteFooter() {
           <p>{COMPANY.contactEmail}</p>
         </div>
         <nav className="flex flex-wrap gap-x-5 gap-y-2 font-semibold">
-          <Link href="/faq" className="hover:text-roast">
-            {t.footer.faq}
-          </Link>
-          <Link href="/terms" className="hover:text-roast">
-            {t.footer.terms}
-          </Link>
-          <Link href="/privacy" className="hover:text-roast">
-            {t.footer.privacy}
-          </Link>
+          {showLegalLinks ? (
+            <>
+              <Link href="/faq" className="hover:text-roast">
+                {t.footer.faq}
+              </Link>
+              <Link href="/terms" className="hover:text-roast">
+                {t.footer.terms}
+              </Link>
+              <Link href="/privacy" className="hover:text-roast">
+                {t.footer.privacy}
+              </Link>
+            </>
+          ) : null}
           <Link href="/outlets" className="hover:text-roast">
             {t.nav.outlets}
           </Link>
