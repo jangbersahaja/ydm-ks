@@ -24,13 +24,14 @@ const STAMP_LIMIT = 14;
 export const instant = false;
 
 export default async function DashboardPage() {
+  await connection();
+
   const customerId = await requireCustomerId();
   const { t, locale } = await getT();
 
   const customer = await getCustomer(customerId);
   if (!customer) redirect("/login");
 
-  await connection();
   await ensureBirthdayVoucher(customer.id, customer.birthday);
 
   const [balance, settings, cupsRule, ledger, vouchers] = await Promise.all([
