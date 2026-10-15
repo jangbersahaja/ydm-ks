@@ -1,9 +1,8 @@
 "use client";
 
 import { BottomSheet } from "@/components/bottom-sheet";
-import { CloseIcon, VoucherKindIcon } from "@/components/icons";
+import { BarcodeIcon, CloseIcon, VoucherKindIcon } from "@/components/icons";
 import {
-  buttonSmClass,
   cardClass,
   iconButtonClass,
   sectionTitleClass,
@@ -70,15 +69,17 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
                   <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{voucher.rewardName}</p>
+                  <p className="font-semibold">{voucher.rewardName}</p>
                   <p className="text-sm text-espresso/70">{voucher.validity}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelected(voucher)}
-                  className={buttonSmClass("primary", "shrink-0")}
+                  aria-label={labels.scanAtStore}
+                  title={labels.scanAtStore}
+                  className={iconButtonClass("primary")}
                 >
-                  {labels.scanAtStore}
+                  <BarcodeIcon className="h-5 w-5" />
                 </button>
               </li>
             ))}
@@ -101,7 +102,7 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
                   <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-espresso/70">
+                  <p className="font-semibold text-espresso/70">
                     {voucher.rewardName}
                   </p>
                   <p className="text-sm text-espresso/55">{voucher.detail}</p>
