@@ -1,8 +1,7 @@
 import { PublicShell } from "@/components/public-shell";
 import { buttonClass, cardClass, sectionTitleClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
-import { TASK_POINTS } from "@/lib/constants";
-import { getCupsVoucherType } from "@/lib/db/queries";
+import { getActiveTaskPoints, getCupsVoucherType } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
 import { getCustomerId } from "@/lib/session";
 import Link from "next/link";
@@ -15,6 +14,12 @@ export default async function HomePage() {
   const { t } = await getT();
   const { pointsPerRinggit, firstPurchaseBonusPoints } = await getSettings();
   const cupsTarget = (await getCupsVoucherType())?.triggerCount ?? 0;
+  const taskPoints = await getActiveTaskPoints();
+  const googlePoints = taskPoints.google_profile ?? 0;
+  const followPoints = Math.max(
+    taskPoints.follow_instagram ?? 0,
+    taskPoints.follow_tiktok ?? 0,
+  );
   const loggedIn = (await getCustomerId()) !== null;
 
   const earnCards = [
@@ -26,14 +31,22 @@ export default async function HomePage() {
       title: t.landing.earnFirstTitle,
       body: t.landing.earnFirstBody(firstPurchaseBonusPoints),
     },
-    {
-      title: t.landing.earnGoogleTitle,
-      body: t.landing.earnGoogleBody(TASK_POINTS.google_profile),
-    },
-    {
-      title: t.landing.earnFollowTitle,
-      body: t.landing.earnFollowBody(TASK_POINTS.follow_instagram),
-    },
+    ...(googlePoints > 0
+      ? [
+          {
+            title: t.landing.earnGoogleTitle,
+            body: t.landing.earnGoogleBody(googlePoints),
+          },
+        ]
+      : []),
+    ...(followPoints > 0
+      ? [
+          {
+            title: t.landing.earnFollowTitle,
+            body: t.landing.earnFollowBody(followPoints),
+          },
+        ]
+      : []),
   ];
 
   const rewardCards = [

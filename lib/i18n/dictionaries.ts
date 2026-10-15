@@ -47,10 +47,11 @@ const en = {
     earnFirstBody: (points: number) =>
       `+${points} bonus points on your first purchase`,
     earnGoogleTitle: "Leave a Google review",
-    earnGoogleBody: (points: number) => `+${points} points for a quick review`,
+    earnGoogleBody: (points: number) =>
+      `+${points} point${points === 1 ? "" : "s"} for a quick review`,
     earnFollowTitle: "Follow us online",
     earnFollowBody: (points: number) =>
-      `+${points} point each for Instagram and TikTok`,
+      `+${points} point${points === 1 ? "" : "s"} each for Instagram and TikTok`,
     rewardsTitle: "What you can get",
     rewardWelcomeTitle: "Welcome voucher",
     rewardWelcomeValue: "Buy 1 free 1",

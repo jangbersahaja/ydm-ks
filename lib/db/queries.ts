@@ -223,6 +223,21 @@ export function getTaskDefinitions() {
     .orderBy(asc(outlets.id), asc(taskDefinitions.kind));
 }
 
+// Highest active points per task kind across outlets.
+export async function getActiveTaskPoints() {
+  const rows = await db
+    .select({
+      kind: taskDefinitions.kind,
+      points: sql<number>`max(${taskDefinitions.points})`.mapWith(Number),
+    })
+    .from(taskDefinitions)
+    .where(eq(taskDefinitions.active, true))
+    .groupBy(taskDefinitions.kind);
+  return Object.fromEntries(rows.map((r) => [r.kind, r.points])) as Partial<
+    Record<string, number>
+  >;
+}
+
 export async function getTasksWithStatus(customerId: number) {
   const defs = await db
     .select({
