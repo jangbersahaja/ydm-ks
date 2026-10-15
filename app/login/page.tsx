@@ -14,7 +14,7 @@ export default async function LoginPage() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-md">
+      <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {t.auth.loginTitle}
         </h1>

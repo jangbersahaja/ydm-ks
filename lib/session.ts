@@ -1,4 +1,5 @@
-import { ADMIN_COOKIE, CUSTOMER_COOKIE } from "@/lib/cookies";
+import { STAFF_OUTLETS } from "@/lib/constants";
+import { ADMIN_COOKIE, CUSTOMER_COOKIE, STAFF_COOKIE } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -74,4 +75,46 @@ export async function isAdmin(): Promise<boolean> {
 
 export async function requireAdmin() {
   if (!(await isAdmin())) redirect("/admin/login");
+}
+
+// The staff cookie holds the outlet code the staff member is signed in to.
+const STAFF_PREFIX = "staff:";
+
+export async function setStaffSession(outletCode: string) {
+  (await cookies()).set(
+    STAFF_COOKIE,
+    pack(`${STAFF_PREFIX}${outletCode}`),
+    cookieOptions,
+  );
+}
+
+export async function clearStaffSession() {
+  (await cookies()).delete(STAFF_COOKIE);
+}
+
+export async function getStaffOutletCode(): Promise<string | null> {
+  const value = unpack((await cookies()).get(STAFF_COOKIE)?.value);
+  return value?.startsWith(STAFF_PREFIX)
+    ? value.slice(STAFF_PREFIX.length)
+    : null;
+}
+
+// Returns the outlet code for a staff route slug, or redirects to that outlet's login.
+export async function requireStaffOutlet(slug: string): Promise<string> {
+  const outletCode = STAFF_OUTLETS[slug];
+  if (!outletCode || (await getStaffOutletCode()) !== outletCode) {
+    redirect(`/staff/${slug}/login`);
+  }
+  return outletCode;
+}
+
+// Counter actions (record purchase, redeem voucher) allow admin or the signed-in staff.
+// `outletCode` is null for admin, who can pick any outlet. Staff are locked to their outlet.
+// Returns null instead of redirecting, so callers can report the expired session.
+export async function getCounterAccess(): Promise<{
+  outletCode: string | null;
+} | null> {
+  if (await isAdmin()) return { outletCode: null };
+  const outletCode = await getStaffOutletCode();
+  return outletCode ? { outletCode } : null;
 }

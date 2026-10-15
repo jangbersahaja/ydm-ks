@@ -14,9 +14,11 @@ export default async function AdminLoginPage() {
     <div className="flex flex-1 items-center justify-center px-5 py-16">
       <div className={`${cardClass} w-full max-w-sm`}>
         <h1 className="text-2xl font-bold tracking-tight">
-          {t.admin.loginTitle}
+          {t.admin.adminLoginTitle}
         </h1>
-        <p className="mt-1 text-sm text-espresso/70">{t.admin.loginBody}</p>
+        <p className="mt-1 text-sm text-espresso/70">
+          {t.admin.adminLoginBody}
+        </p>
         <ActionForm action={adminLoginAction} className="mt-6 space-y-4">
           <Field label={t.admin.password}>
             <input

@@ -1,5 +1,6 @@
 "use client";
 
+import { pageWidthClass } from "@/components/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -12,7 +13,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
       aria-label="Main"
       className="fixed inset-x-0 bottom-0 z-20 border-t border-espresso/10 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-5 gap-1 px-2 py-1.5">
+      <ul className={`${pageWidthClass} grid grid-cols-5 gap-1 px-2 py-1.5`}>
         {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);

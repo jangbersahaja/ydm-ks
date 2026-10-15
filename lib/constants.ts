@@ -1,5 +1,5 @@
 export const TASK_KINDS = [
-  "google_review",
+  "google_profile",
   "follow_instagram",
   "follow_tiktok",
 ] as const;
@@ -9,6 +9,12 @@ export type TaskKind = (typeof TASK_KINDS)[number];
 export function isTaskKind(value: string): value is TaskKind {
   return (TASK_KINDS as readonly string[]).includes(value);
 }
+
+// Staff counter URL slug -> outlet code (see scripts/seed.ts).
+export const STAFF_OUTLETS: Record<string, string> = {
+  ksnus: "nu-sentral",
+  kscic: "central-i-city",
+};
 
 export const DEFAULT_SETTINGS = {
   points_per_ringgit: "1",
@@ -110,7 +116,7 @@ export const DEFAULT_VOUCHER_TYPES: {
 ];
 
 export const TASK_POINTS: Record<TaskKind, number> = {
-  google_review: 2,
+  google_profile: 2,
   follow_instagram: 1,
   follow_tiktok: 1,
 };
@@ -118,14 +124,14 @@ export const TASK_POINTS: Record<TaskKind, number> = {
 // Keyed by outlet code (see scripts/seed.ts).
 export const OUTLET_TASK_URLS: Record<string, Record<TaskKind, string>> = {
   "central-i-city": {
-    google_review:
-      "https://search.google.com/local/writereview?placeid=ChIJnd3QEABTzDERUOHbUjzLSRc",
+    google_profile:
+      "https://www.google.com/maps/place/?q=place_id:ChIJnd3QEABTzDERUOHbUjzLSRc",
     follow_instagram: "https://www.instagram.com/kopisaigon.icity/",
     follow_tiktok: "https://www.tiktok.com/@kopisaigon.icity",
   },
   "nu-sentral": {
-    google_review:
-      "https://search.google.com/local/writereview?placeid=ChIJnYfObE5JzDERf_Enu2y1dzs",
+    google_profile:
+      "https://www.google.com/maps/place/?q=place_id:ChIJnYfObE5JzDERf_Enu2y1dzs",
     follow_instagram: "https://www.instagram.com/kopisaigon.nusentral/",
     follow_tiktok: "https://www.tiktok.com/@kopisaigon.nusentral",
   },

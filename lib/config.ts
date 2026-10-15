@@ -1,6 +1,8 @@
 import { DEFAULT_SETTINGS } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { settings } from "@/lib/db/schema";
+import { hashPassword, verifyPassword } from "@/lib/password";
+import { eq } from "drizzle-orm";
 
 export type ProgramSettings = {
   pointsPerRinggit: number;
@@ -35,4 +37,38 @@ export async function saveSettings(values: Partial<ProgramSettings>) {
         .onConflictDoUpdate({ target: settings.key, set: { value } }),
     ),
   );
+}
+
+// Staff passwords live in the settings table, one hashed entry per outlet code.
+function staffPasswordKey(outletCode: string) {
+  return `staff_password_${outletCode}`;
+}
+
+async function getStaffPasswordHash(outletCode: string) {
+  const [row] = await db
+    .select({ value: settings.value })
+    .from(settings)
+    .where(eq(settings.key, staffPasswordKey(outletCode)))
+    .limit(1);
+  return row?.value ?? null;
+}
+
+export async function hasStaffPassword(outletCode: string) {
+  return (await getStaffPasswordHash(outletCode)) !== null;
+}
+
+export async function verifyStaffPassword(
+  outletCode: string,
+  password: string,
+) {
+  const stored = await getStaffPasswordHash(outletCode);
+  return stored ? verifyPassword(password, stored) : false;
+}
+
+export async function saveStaffPassword(outletCode: string, password: string) {
+  const value = hashPassword(password);
+  await db
+    .insert(settings)
+    .values({ key: staffPasswordKey(outletCode), value })
+    .onConflictDoUpdate({ target: settings.key, set: { value } });
 }

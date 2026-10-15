@@ -51,3 +51,6 @@ export const inputClass =
 export const labelClass = "mb-1.5 block text-sm font-medium text-espresso";
 
 export const sectionTitleClass = "text-lg font-semibold text-espresso";
+
+// Shared content width for every page and its header/footer/nav.
+export const pageWidthClass = "mx-auto w-full max-w-3xl";

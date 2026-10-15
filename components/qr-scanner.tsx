@@ -14,6 +14,9 @@ type Props = {
   hint: string;
   errorLabel: string;
   insecureLabel: string;
+  required?: boolean;
+  value?: string;
+  onValueChange?: (value: string) => void;
 };
 
 // Camera access is only exposed on https or localhost.
@@ -45,8 +48,12 @@ export function QrScannerInput({
   hint,
   errorLabel,
   insecureLabel,
+  required = true,
+  value: controlledValue,
+  onValueChange,
 }: Props) {
-  const [value, setValue] = useState("");
+  const [internalValue, setInternalValue] = useState("");
+  const value = controlledValue ?? internalValue;
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const regionId = `qr-reader-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -83,7 +90,9 @@ export function QrScannerInput({
           { facingMode: "environment" },
           { fps: 10, qrbox: 240 },
           (decodedText) => {
-            setValue(decodedText.trim());
+            const next = decodedText.trim();
+            setInternalValue(next);
+            onValueChange?.(next);
             setScanning(false);
           },
           () => {},
@@ -99,7 +108,7 @@ export function QrScannerInput({
       cancelled = true;
       if (scanner) void stopScanner(scanner);
     };
-  }, [scanning, regionId, errorLabel]);
+  }, [scanning, regionId, errorLabel, onValueChange]);
 
   return (
     <div className="block space-y-1.5">
@@ -111,9 +120,12 @@ export function QrScannerInput({
           autoComplete="off"
           autoCapitalize="characters"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setInternalValue(e.target.value);
+            onValueChange?.(e.target.value);
+          }}
           placeholder={placeholder}
-          required
+          required={required}
           className={inputClass}
         />
         <button

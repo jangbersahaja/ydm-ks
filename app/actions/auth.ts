@@ -8,6 +8,7 @@ import { getCustomerByPhone } from "@/lib/db/queries";
 import { customers } from "@/lib/db/schema";
 import { fail, text } from "@/lib/form";
 import { getT } from "@/lib/i18n";
+import { LEGAL_VERSION } from "@/lib/legal";
 import { normalizeMyPhone } from "@/lib/phone";
 import { clearCustomerSession, setCustomerSession } from "@/lib/session";
 import { issueRegistrationVouchers } from "@/lib/vouchers";
@@ -34,12 +35,21 @@ export async function registerAction(
 
   if (!verifyDemoOtp(text(formData, "otp"))) return fail(t.auth.errors.code);
 
+  if (formData.get("acceptTerms") !== "on") return fail(t.auth.errors.terms);
+
   if (await getCustomerByPhone(phone)) return fail(t.auth.errors.exists);
 
   const customerId = await db.transaction(async (tx) => {
     const [created] = await tx
       .insert(customers)
-      .values({ phone, name, email, birthday })
+      .values({
+        phone,
+        name,
+        email,
+        birthday,
+        termsAcceptedAt: new Date(),
+        termsVersion: LEGAL_VERSION,
+      })
       .returning({ id: customers.id });
     await issueRegistrationVouchers(tx, created.id);
     return created.id;

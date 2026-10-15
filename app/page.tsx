@@ -1,16 +1,67 @@
 import { PublicShell } from "@/components/public-shell";
 import { buttonClass, cardClass, sectionTitleClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
+import { TASK_POINTS } from "@/lib/constants";
 import { getCupsVoucherType } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
+import { getCustomerId } from "@/lib/session";
 import Link from "next/link";
+import { connection } from "next/server";
 
 export const instant = false;
 
 export default async function HomePage() {
+  await connection();
   const { t } = await getT();
-  const { pointsPerRinggit } = await getSettings();
+  const { pointsPerRinggit, firstPurchaseBonusPoints } = await getSettings();
   const cupsTarget = (await getCupsVoucherType())?.triggerCount ?? 0;
+  const loggedIn = (await getCustomerId()) !== null;
+
+  const earnCards = [
+    {
+      title: t.landing.earnPurchaseTitle,
+      body: t.landing.pointsLine(pointsPerRinggit),
+    },
+    {
+      title: t.landing.earnFirstTitle,
+      body: t.landing.earnFirstBody(firstPurchaseBonusPoints),
+    },
+    {
+      title: t.landing.earnGoogleTitle,
+      body: t.landing.earnGoogleBody(TASK_POINTS.google_profile),
+    },
+    {
+      title: t.landing.earnFollowTitle,
+      body: t.landing.earnFollowBody(TASK_POINTS.follow_instagram),
+    },
+  ];
+
+  const rewardCards = [
+    {
+      value: t.landing.rewardWelcomeValue,
+      title: t.landing.rewardWelcomeTitle,
+      body: t.landing.rewardWelcomeBody,
+    },
+    {
+      value: t.landing.rewardBirthdayValue,
+      title: t.landing.rewardBirthdayTitle,
+      body: t.landing.rewardBirthdayBody,
+    },
+    ...(cupsTarget > 0
+      ? [
+          {
+            value: t.landing.rewardCupsValue,
+            title: t.landing.rewardCupsTitle(cupsTarget),
+            body: t.landing.rewardCupsBody,
+          },
+        ]
+      : []),
+    {
+      value: t.landing.rewardPointsValue,
+      title: t.landing.rewardPointsTitle,
+      body: t.landing.rewardPointsBody,
+    },
+  ];
 
   const steps = [
     { title: t.landing.step1Title, body: t.landing.step1Body },
@@ -43,10 +94,10 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              href="/register"
+              href={loggedIn ? "/dashboard" : "/register"}
               className={`${buttonClass("primary")} w-full sm:w-auto`}
             >
-              {t.landing.join}
+              {loggedIn ? t.nav.dashboard : t.landing.join}
             </Link>
             <Link
               href="/outlets"
@@ -74,6 +125,47 @@ export default async function HomePage() {
           </ol>
         </div>
       </section>
+
+      <section className="mt-14 space-y-5">
+        <h2 className={sectionTitleClass}>{t.landing.earnTitle}</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {earnCards.map((card) => (
+            <div key={card.title} className={cardClass}>
+              <p className="font-semibold">{card.title}</p>
+              <p className="mt-1 text-sm text-espresso/70">{card.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-14 space-y-5">
+        <h2 className={sectionTitleClass}>{t.landing.rewardsTitle}</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {rewardCards.map((card) => (
+            <div key={card.title} className={`${cardClass} space-y-2`}>
+              <p className="text-3xl font-bold tracking-tight text-roast">
+                {card.value}
+              </p>
+              <p className="font-semibold">{card.title}</p>
+              <p className="text-sm text-espresso/70">{card.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {loggedIn ? null : (
+        <section className="mt-14 rounded-2xl bg-roast p-6 text-cream sm:p-8">
+          <div className="max-w-xl space-y-4">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t.landing.joinTitle}
+            </h2>
+            <p className="text-cream/85">{t.auth.welcomePerk}</p>
+            <Link href="/register" className={buttonClass("secondary")}>
+              {t.landing.join}
+            </Link>
+          </div>
+        </section>
+      )}
     </PublicShell>
   );
 }

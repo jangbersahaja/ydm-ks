@@ -8,8 +8,9 @@ import {
   inputClass,
   sectionTitleClass,
 } from "@/components/ui";
-import { getSettings } from "@/lib/config";
-import { getTaskDefinitions } from "@/lib/db/queries";
+import { getSettings, hasStaffPassword } from "@/lib/config";
+import { STAFF_OUTLETS } from "@/lib/constants";
+import { getOutletByCode, getTaskDefinitions } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
 import { taskTitle } from "@/lib/labels";
 
@@ -17,15 +18,26 @@ export const instant = false;
 
 export default async function AdminSettingsPage() {
   const { t } = await getT();
-  const [settings, defs] = await Promise.all([
+  const [settings, defs, staffOutlets] = await Promise.all([
     getSettings(),
     getTaskDefinitions(),
+    Promise.all(
+      Object.entries(STAFF_OUTLETS).map(async ([slug, code]) => {
+        const outlet = await getOutletByCode(code);
+        return {
+          slug,
+          code,
+          name: outlet?.name ?? code,
+          hasPassword: await hasStaffPassword(code),
+        };
+      }),
+    ),
   ]);
 
   const outletNames = [...new Set(defs.map((def) => def.outletName))];
 
   return (
-    <div className="mx-auto max-w-md space-y-6">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">
         {t.admin.settingsTitle}
       </h1>
@@ -77,6 +89,37 @@ export default async function AdminSettingsPage() {
                     />
                   </Field>
                 ))}
+            </div>
+          ))}
+        </section>
+
+        <section className={`${cardClass} space-y-4`}>
+          <div>
+            <h2 className={sectionTitleClass}>{t.admin.staffAccess}</h2>
+            <p className="mt-1 text-sm text-espresso/70">
+              {t.admin.staffAccessBody}
+            </p>
+          </div>
+          {staffOutlets.map((staff) => (
+            <div key={staff.code} className="space-y-3">
+              <h3 className="text-sm font-semibold text-espresso/70">
+                {staff.name} · /staff/{staff.slug} ·{" "}
+                {staff.hasPassword
+                  ? t.admin.staffPasswordSet
+                  : t.admin.staffPasswordNotSet}
+              </h3>
+              <Field
+                label={t.admin.staffPassword}
+                hint={t.admin.staffPasswordHint}
+              >
+                <input
+                  name={`staff_password_${staff.code}`}
+                  type="password"
+                  autoComplete="new-password"
+                  maxLength={100}
+                  className={inputClass}
+                />
+              </Field>
             </div>
           ))}
         </section>

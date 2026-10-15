@@ -1,4 +1,5 @@
 import { AdminNav } from "@/components/admin-nav";
+import { pageWidthClass } from "@/components/ui";
 import { requireAdmin } from "@/lib/session";
 import type { ReactNode } from "react";
 
@@ -14,9 +15,7 @@ export default async function AdminPanelLayout({
   return (
     <>
       <AdminNav />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-8">
-        {children}
-      </main>
+      <main className={`${pageWidthClass} flex-1 px-5 py-8`}>{children}</main>
     </>
   );
 }

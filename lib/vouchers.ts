@@ -15,6 +15,40 @@ export function randomCode() {
   return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
 }
 
+// Free drinks are priced by staff at the counter and capped at the bill amount.
+export function voucherDiscountCents(
+  kind: string,
+  value: number,
+  amountCents: number,
+  drinkPriceCents = 0,
+) {
+  if (kind === "percent_off") return Math.floor((amountCents * value) / 100);
+  if (kind === "amount_off") return Math.min(value, amountCents);
+  if (kind === "free_drink") return Math.min(drinkPriceCents, amountCents);
+  return 0;
+}
+
+export type VoucherState = {
+  customerId: number;
+  status: string;
+  expiresAt: Date | null;
+};
+
+export type VoucherProblem = "other_member" | "used" | "expired";
+
+// Checks a found voucher against the member it is used for. Null means it is usable.
+export function voucherProblem(
+  voucher: VoucherState,
+  memberId: number | null,
+  now: Date,
+): VoucherProblem | null {
+  if (memberId !== null && voucher.customerId !== memberId)
+    return "other_member";
+  if (voucher.status !== "issued") return "used";
+  if (voucher.expiresAt && voucher.expiresAt <= now) return "expired";
+  return null;
+}
+
 export function activeTypesByTrigger(exec: Executor, trigger: VoucherTrigger) {
   return exec
     .select()

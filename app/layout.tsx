@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kopi Saigon Rewards (Demo)",
+  title: "YDM-KS-Points (Demo)",
   description:
     "Demo loyalty app: earn points on every visit and redeem a free drink.",
 };

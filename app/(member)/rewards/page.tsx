@@ -1,23 +1,38 @@
-import { redeemVoucherTypeAction } from "@/app/actions/customer";
-import { ActionForm } from "@/components/action-form";
 import { QrCode } from "@/components/qr-code";
-import { SubmitButton } from "@/components/submit-button";
-import { buttonClass, cardClass, sectionTitleClass } from "@/components/ui";
+import { RedeemVoucherCard } from "@/components/redeem-voucher-card";
+import { cardClass, sectionTitleClass } from "@/components/ui";
+import {
+  type ActiveVoucherView,
+  type PastVoucherView,
+  VoucherList,
+} from "@/components/voucher-list";
 import {
   getBalance,
   getCustomer,
   getRedemptions,
   getVoucherTypes,
 } from "@/lib/db/queries";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n";
 import { requireCustomerId } from "@/lib/session";
 import { ensureBirthdayVoucher } from "@/lib/vouchers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const instant = false;
 
-export default async function RewardsPage() {
+const tabClass = (active: boolean) =>
+  `flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold transition ${
+    active ? "bg-white text-roast shadow-sm" : "text-espresso/60"
+  }`;
+
+export default async function RewardsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const activeTab = tab === "vouchers" ? "vouchers" : "points";
   const customerId = await requireCustomerId();
   const { t, locale } = await getT();
 
@@ -43,6 +58,59 @@ export default async function RewardsPage() {
     return t.rewards.freeDrink;
   };
 
+  const isActiveVoucher = (voucher: (typeof vouchers)[number]) =>
+    voucher.status === "issued" && !voucher.isExpired;
+
+  const activeVouchers: ActiveVoucherView[] = vouchers
+    .filter(isActiveVoucher)
+    .map((voucher) => ({
+      id: voucher.id,
+      kind: voucher.kind,
+      rewardName: voucher.rewardName,
+      description: describe(voucher.kind, voucher.value),
+      code: voucher.code,
+      validity: voucher.expiresAt
+        ? t.rewards.expires(formatDate(voucher.expiresAt, locale))
+        : t.rewards.noExpiry,
+      issued: t.rewards.issuedOn(formatDate(voucher.createdAt, locale)),
+      qr: <QrCode value={voucher.code} size={240} />,
+    }));
+
+  const pastVouchers: PastVoucherView[] = vouchers
+    .filter((voucher) => !isActiveVoucher(voucher))
+    .map((voucher) => ({
+      id: voucher.id,
+      kind: voucher.kind,
+      rewardName: voucher.rewardName,
+      detail:
+        voucher.status === "redeemed"
+          ? t.rewards.redeemedOn(
+              formatDate(voucher.redeemedAt ?? voucher.createdAt, locale),
+            )
+          : t.rewards.expiredOn(
+              formatDate(voucher.expiresAt ?? voucher.createdAt, locale),
+            ),
+    }));
+
+  const voucherLabels = {
+    activeTitle: t.rewards.activeTitle,
+    pastTitle: t.rewards.pastTitle,
+    emptyText: t.rewards.noVouchers,
+    scanAtStore: t.rewards.scanAtStore,
+    closeVoucher: t.rewards.closeVoucher,
+    voucherCode: t.rewards.voucherCode,
+    showMore: t.rewards.showMore,
+  };
+
+  const redeemLabels = {
+    redeem: t.rewards.redeem,
+    confirmTitle: t.rewards.confirmRedeemTitle,
+    confirm: t.rewards.confirmRedeem,
+    cancel: t.rewards.cancelRedeem,
+    close: t.rewards.closeVoucher,
+    viewVouchers: t.rewards.viewVouchers,
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -57,101 +125,71 @@ export default async function RewardsPage() {
         </p>
       </section>
 
-      <section className="space-y-3">
-        <h2 className={sectionTitleClass}>{t.rewards.pointsTitle}</h2>
-        {pointTypes.length === 0 ? (
-          <p className="text-sm text-espresso/70">{t.rewards.pointsEmpty}</p>
-        ) : (
-          <ul className="space-y-3">
-            {pointTypes.map((type) => {
-              const cost = type.pointsCost ?? 0;
-              const canRedeem = balance >= cost;
-              return (
-                <li key={type.id} className={`${cardClass} space-y-4`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-semibold">{type.name}</p>
-                      <p className="text-sm text-espresso/70">
-                        {describe(type.kind, type.value)}
-                      </p>
-                    </div>
-                    <p className="shrink-0 text-sm font-semibold text-roast">
-                      {t.rewards.pointsCost(cost)}
-                    </p>
-                  </div>
-                  <ActionForm action={redeemVoucherTypeAction}>
-                    <input type="hidden" name="voucherTypeId" value={type.id} />
-                    <SubmitButton
-                      disabled={!canRedeem}
-                      className={`${buttonClass("primary")} w-full`}
-                    >
-                      {canRedeem
-                        ? t.rewards.redeem
-                        : t.rewards.notEnough(cost - balance)}
-                    </SubmitButton>
-                  </ActionForm>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <div className="grid grid-cols-2 gap-1 rounded-2xl bg-espresso/5 p-1">
+        <Link
+          href="/rewards?tab=points"
+          aria-current={activeTab === "points" ? "page" : undefined}
+          className={tabClass(activeTab === "points")}
+        >
+          {t.rewards.redeem}
+        </Link>
+        <Link
+          href="/rewards?tab=vouchers"
+          aria-current={activeTab === "vouchers" ? "page" : undefined}
+          className={tabClass(activeTab === "vouchers")}
+        >
+          {t.rewards.vouchers}
+          {activeVouchers.length > 0 ? (
+            <span className="ml-2 rounded-full bg-roast px-2 py-0.5 text-xs text-white tabular-nums">
+              {activeVouchers.length}
+            </span>
+          ) : null}
+        </Link>
+      </div>
 
-      <section className="space-y-3">
-        <h2 className={sectionTitleClass}>{t.rewards.vouchers}</h2>
-        {vouchers.length === 0 ? (
-          <p className="text-sm text-espresso/70">{t.rewards.noVouchers}</p>
-        ) : (
-          <ul className="space-y-3">
-            {vouchers.map((voucher) => {
-              const isRedeemed = voucher.status === "redeemed";
-              const isExpired = !isRedeemed && voucher.isExpired;
-              const isReady = !isRedeemed && !isExpired;
-              const statusLabel = isRedeemed
-                ? t.rewards.redeemed
-                : isExpired
-                  ? t.rewards.expired
-                  : t.rewards.issued;
-
-              return (
-                <li
-                  key={voucher.id}
-                  className={`${cardClass} flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left`}
-                >
-                  {isReady ? <QrCode value={voucher.code} size={112} /> : null}
-                  <div className="min-w-0 space-y-1">
-                    <p className="font-semibold">{voucher.rewardName}</p>
-                    <p className="text-sm text-espresso/75">
-                      {describe(voucher.kind, voucher.value)}
-                    </p>
-                    <p className="text-sm">
-                      {t.rewards.voucherCode}:{" "}
-                      <span className="break-all font-mono font-semibold tracking-wider">
-                        {voucher.code}
-                      </span>
-                    </p>
-                    <p
-                      className={`text-xs font-medium ${isReady ? "text-emerald-700" : "text-espresso/55"}`}
-                    >
-                      {statusLabel} ·{" "}
-                      {formatDateTime(voucher.createdAt, locale)}
-                    </p>
-                    {isReady ? (
-                      <p className="text-xs text-espresso/55">
-                        {voucher.expiresAt
-                          ? t.rewards.expires(
-                              formatDate(voucher.expiresAt, locale),
-                            )
-                          : t.rewards.noExpiry}
-                      </p>
-                    ) : null}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      {activeTab === "points" ? (
+        <section className="space-y-3">
+          <h2 className={sectionTitleClass}>{t.rewards.pointsTitle}</h2>
+          {pointTypes.length === 0 ? (
+            <p className="text-sm text-espresso/70">{t.rewards.pointsEmpty}</p>
+          ) : (
+            <ul className="space-y-3">
+              {pointTypes.map((type) => {
+                const cost = type.pointsCost ?? 0;
+                const canRedeem = balance >= cost;
+                const progress =
+                  cost > 0
+                    ? Math.min(100, Math.round((balance / cost) * 100))
+                    : 100;
+                return (
+                  <RedeemVoucherCard
+                    key={type.id}
+                    voucherTypeId={type.id}
+                    name={type.name}
+                    kind={type.kind}
+                    description={describe(type.kind, type.value)}
+                    costText={t.rewards.pointsCost(cost)}
+                    canRedeem={canRedeem}
+                    progress={progress}
+                    notEnoughText={
+                      canRedeem ? null : t.rewards.notEnough(cost - balance)
+                    }
+                    confirmText={t.rewards.confirmRedeemBody(cost)}
+                    balanceAfterText={t.rewards.balanceAfter(balance - cost)}
+                    labels={redeemLabels}
+                  />
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      ) : (
+        <VoucherList
+          active={activeVouchers}
+          past={pastVouchers}
+          labels={voucherLabels}
+        />
+      )}
     </div>
   );
 }

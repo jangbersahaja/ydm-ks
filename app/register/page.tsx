@@ -17,7 +17,7 @@ export default async function RegisterPage() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-md">
+      <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {t.auth.registerTitle}
         </h1>
@@ -75,6 +75,25 @@ export default async function RegisterPage() {
                 className={inputClass}
               />
             </Field>
+            <div className="flex items-start gap-3 text-sm text-espresso/80">
+              <input
+                id="acceptTerms"
+                name="acceptTerms"
+                type="checkbox"
+                required
+                className="mt-1 h-4 w-4 shrink-0 accent-roast"
+              />
+              <label htmlFor="acceptTerms" className="leading-6">
+                {t.auth.consent.prefix}{" "}
+                <Link href="/terms" className="font-semibold text-roast">
+                  {t.footer.terms}
+                </Link>{" "}
+                {t.auth.consent.and}{" "}
+                <Link href="/privacy" className="font-semibold text-roast">
+                  {t.footer.privacy}
+                </Link>
+              </label>
+            </div>
             <SubmitButton className={`${buttonClass("primary")} w-full`}>
               {t.auth.registerCta}
             </SubmitButton>

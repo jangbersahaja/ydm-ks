@@ -12,6 +12,7 @@ import {
   taskDefinitions,
   voucherTypes,
 } from "@/lib/db/schema";
+import { notInArray } from "drizzle-orm";
 
 async function main() {
   await db
@@ -50,6 +51,11 @@ async function main() {
         });
     }
   }
+
+  await db
+    .update(taskDefinitions)
+    .set({ active: false })
+    .where(notInArray(taskDefinitions.kind, [...TASK_KINDS]));
 
   await db
     .insert(settings)

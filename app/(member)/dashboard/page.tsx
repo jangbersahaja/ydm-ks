@@ -1,5 +1,4 @@
 import { ArrowIcon } from "@/components/icons";
-import { ProgressStamps } from "@/components/progress-stamps";
 import { QrCode } from "@/components/qr-code";
 import { cardClass, iconButtonClass, sectionTitleClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
@@ -18,8 +17,6 @@ import { ensureBirthdayVoucher } from "@/lib/vouchers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
-
-const STAMP_LIMIT = 14;
 
 export const instant = false;
 
@@ -57,14 +54,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm text-espresso/60">
-          {t.dashboard.greeting(firstName)}
-        </p>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t.dashboard.balance}
-        </h1>
-      </div>
+      <h1 className="text-center text-3xl font-bold tracking-tight">
+        {t.dashboard.greeting(firstName)}
+      </h1>
 
       <section
         className={`${cardClass} flex flex-col items-center gap-4 text-center`}
@@ -73,7 +65,11 @@ export default async function DashboardPage() {
           <p className="font-semibold">{t.dashboard.memberTitle}</p>
           <p className="text-sm text-espresso/65">{t.dashboard.memberHint}</p>
         </div>
-        <QrCode value={customer.memberCode} size={280} />
+        <QrCode
+          value={customer.memberCode}
+          size={600}
+          className="block h-auto w-full rounded-xl bg-white p-2"
+        />
         <p className="text-xs text-espresso/60">
           {t.dashboard.memberCode}:{" "}
           <span className="font-mono font-semibold tracking-widest">
@@ -103,22 +99,18 @@ export default async function DashboardPage() {
                 {t.dashboard.cupsProgress(cupsProgress, cupsTarget)}
               </p>
             </div>
-            {cupsTarget <= STAMP_LIMIT ? (
-              <ProgressStamps filled={cupsProgress} total={cupsTarget} />
-            ) : (
+            <div
+              className="h-3 w-full overflow-hidden rounded-full bg-espresso/10"
+              role="progressbar"
+              aria-valuenow={cupsPercent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
               <div
-                className="h-3 w-full overflow-hidden rounded-full bg-espresso/10"
-                role="progressbar"
-                aria-valuenow={cupsPercent}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
-                <div
-                  className="h-full rounded-full bg-roast"
-                  style={{ width: `${cupsPercent}%` }}
-                />
-              </div>
-            )}
+                className="h-full rounded-full bg-roast transition-[width] duration-500"
+                style={{ width: `${cupsPercent}%` }}
+              />
+            </div>
             <p className="text-sm font-medium">
               {t.dashboard.cupsToNext(cupsTarget - cupsProgress)}
             </p>
@@ -126,22 +118,29 @@ export default async function DashboardPage() {
           </div>
         ) : null}
 
-        <div className="flex flex-col gap-3 border-t border-espresso/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-t border-espresso/10 pt-5">
           {readyCount > 0 ? (
-            <p className="font-semibold text-roast">
-              {t.dashboard.vouchersReady(readyCount)}
-            </p>
+            <Link
+              href="/rewards"
+              className="flex items-center justify-between gap-3 rounded-2xl bg-roast px-4 py-3.5 text-cream shadow-md ring-4 ring-roast/20 transition active:scale-[0.99]"
+            >
+              <span className="font-semibold">
+                {t.dashboard.vouchersReady(readyCount)}
+              </span>
+              <ArrowIcon className="h-5 w-5 shrink-0" />
+            </Link>
           ) : (
-            <span />
+            <div className="flex justify-end">
+              <Link
+                href="/rewards"
+                aria-label={t.dashboard.viewRewards}
+                title={t.dashboard.viewRewards}
+                className={iconButtonClass("primary")}
+              >
+                <ArrowIcon />
+              </Link>
+            </div>
           )}
-          <Link
-            href="/rewards"
-            aria-label={t.dashboard.viewRewards}
-            title={t.dashboard.viewRewards}
-            className={iconButtonClass("primary", "self-end sm:self-auto")}
-          >
-            <ArrowIcon />
-          </Link>
         </div>
       </section>
 

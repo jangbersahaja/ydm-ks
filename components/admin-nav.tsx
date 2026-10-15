@@ -1,23 +1,25 @@
 import { adminLogoutAction } from "@/app/actions/admin";
 import { LogOutIcon } from "@/components/icons";
-import { iconButtonClass } from "@/components/ui";
+import { iconButtonClass, pageWidthClass } from "@/components/ui";
 import { getT } from "@/lib/i18n";
 import Link from "next/link";
 
 export async function AdminNav() {
   const { t } = await getT();
   const items = [
-    { href: "/admin", label: t.admin.navPurchase },
-    { href: "/admin/redeem", label: t.admin.navRedeem },
+    { href: "/admin", label: t.admin.navCounter },
     { href: "/admin/vouchers", label: t.admin.navVouchers },
+    { href: "/admin/analytics", label: t.admin.navAnalytics },
     { href: "/admin/settings", label: t.admin.navSettings },
   ];
   return (
     <header className="border-b border-espresso/10 bg-white">
-      <div className="mx-auto flex max-w-5xl flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+      <div
+        className={`${pageWidthClass} flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3`}
+      >
         <div className="flex items-center justify-between gap-3">
           <Link href="/admin" className="font-bold text-espresso">
-            {t.brand} · Staff
+            {t.brand} · {t.admin.panelTitle}
           </Link>
           <form action={adminLogoutAction} className="sm:hidden">
             <button

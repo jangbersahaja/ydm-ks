@@ -36,3 +36,12 @@ summary {
   outline: 2px solid var(--color-roast);
   outline-offset: 2px;
 }
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
