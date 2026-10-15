@@ -6,12 +6,19 @@ type BottomSheetProps = {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  // When false, backdrop click and Escape are ignored; only in-sheet buttons close it.
+  dismissible?: boolean;
 };
 
 const sheetClass =
   "fixed inset-x-0 top-auto bottom-0 mx-auto max-h-[85vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-0 text-espresso shadow-xl backdrop:bg-espresso/60 open:animate-[sheet-up_220ms_ease-out]";
 
-export function BottomSheet({ open, onClose, children }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onClose,
+  children,
+  dismissible = true,
+}: BottomSheetProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -25,8 +32,12 @@ export function BottomSheet({ open, onClose, children }: BottomSheetProps) {
     <dialog
       ref={dialogRef}
       onClose={onClose}
+      onCancel={(event) => {
+        if (!dismissible) event.preventDefault();
+      }}
       onClick={(event) => {
-        if (event.target === dialogRef.current) dialogRef.current?.close();
+        if (dismissible && event.target === dialogRef.current)
+          dialogRef.current?.close();
       }}
       className={sheetClass}
     >

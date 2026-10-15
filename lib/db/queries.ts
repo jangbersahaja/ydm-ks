@@ -124,6 +124,70 @@ export function getLedger(customerId: number, limit = 50) {
     .limit(limit);
 }
 
+export async function getLatestPurchaseId(customerId: number) {
+  const [row] = await db
+    .select({ id: purchases.id })
+    .from(purchases)
+    .where(eq(purchases.customerId, customerId))
+    .orderBy(desc(purchases.id))
+    .limit(1);
+  return row?.id ?? null;
+}
+
+// Bonus and free-drink rows are written in the same transaction as the purchase,
+// so they share its createdAt. Joining on it finds only rows from that purchase.
+export async function getLatestPurchaseSummary(
+  customerId: number,
+  cupsVoucherTypeId: number | null,
+) {
+  const [purchase] = await db
+    .select({
+      id: purchases.id,
+      amountCents: purchases.amountCents,
+      discountCents: purchases.discountCents,
+      points: purchases.points,
+    })
+    .from(purchases)
+    .where(eq(purchases.customerId, customerId))
+    .orderBy(desc(purchases.id))
+    .limit(1);
+  if (!purchase) return null;
+
+  const [bonus] = await db
+    .select({
+      total: sql<number>`coalesce(sum(${pointLedger.delta}), 0)::int`,
+    })
+    .from(pointLedger)
+    .innerJoin(purchases, eq(pointLedger.createdAt, purchases.createdAt))
+    .where(
+      and(
+        eq(purchases.id, purchase.id),
+        eq(pointLedger.customerId, customerId),
+        eq(pointLedger.reason, "bonus:first_purchase"),
+      ),
+    );
+
+  const [drinks] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(redemptions)
+    .innerJoin(purchases, eq(redemptions.createdAt, purchases.createdAt))
+    .where(
+      and(
+        eq(purchases.id, purchase.id),
+        eq(redemptions.customerId, customerId),
+        cupsVoucherTypeId === null
+          ? sql`false`
+          : eq(redemptions.voucherTypeId, cupsVoucherTypeId),
+      ),
+    );
+
+  return {
+    ...purchase,
+    bonus: Number(bonus?.total ?? 0),
+    freeDrinks: Number(drinks?.count ?? 0),
+  };
+}
+
 export function getPurchases(customerId: number, limit = 50) {
   return db
     .select({

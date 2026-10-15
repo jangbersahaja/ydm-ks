@@ -1,6 +1,8 @@
 import { BottomNav } from "@/components/bottom-nav";
+import { PurchaseAlert } from "@/components/purchase-alert";
 import { SiteHeader } from "@/components/site-header";
 import { pageWidthClass } from "@/components/ui";
+import { getLatestPurchaseId } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
 import { requireCustomerId } from "@/lib/session";
 import Link from "next/link";
@@ -13,8 +15,9 @@ export default async function MemberLayout({
 }: {
   children: ReactNode;
 }) {
-  await requireCustomerId();
+  const customerId = await requireCustomerId();
   const { t } = await getT();
+  const latestPurchaseId = await getLatestPurchaseId(customerId);
 
   const items = [
     { href: "/dashboard", label: t.nav.home },
@@ -35,6 +38,10 @@ export default async function MemberLayout({
           <Link href="/privacy">{t.footer.privacy}</Link>
         </nav>
       </main>
+      <PurchaseAlert
+        initialPurchaseId={latestPurchaseId}
+        labels={t.purchaseAlert}
+      />
       <BottomNav items={items} />
     </>
   );

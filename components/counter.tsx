@@ -71,6 +71,10 @@ async function PurchaseSection({
             drinkPriceHint: t.admin.drinkPriceHint,
             voucherIncomplete: t.admin.voucherIncomplete,
             record: t.admin.record,
+            confirmTitle: t.admin.confirmPurchaseTitle,
+            confirm: t.admin.confirmPurchase,
+            cancel: t.admin.cancelPurchase,
+            close: t.admin.close,
           }}
         />
       </div>

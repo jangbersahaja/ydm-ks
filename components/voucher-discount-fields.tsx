@@ -2,7 +2,6 @@
 
 import { lookupVoucherAction } from "@/app/actions/admin";
 import { Field } from "@/components/field";
-import { SubmitButton } from "@/components/submit-button";
 import { inputClass } from "@/components/ui";
 import { useVoucherCode } from "@/components/voucher-code-context";
 import { isPricedFreeItemKind } from "@/lib/constants";
@@ -119,21 +118,5 @@ export function VoucherDiscountFields({
         />
       </Field>
     </>
-  );
-}
-
-// Keeps submit disabled while the entered voucher is unusable, so the error shows only once.
-export function VoucherSubmitButton({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const { voucherBlocked } = useVoucherCode();
-  return (
-    <SubmitButton className={className} disabled={voucherBlocked}>
-      {children}
-    </SubmitButton>
   );
 }

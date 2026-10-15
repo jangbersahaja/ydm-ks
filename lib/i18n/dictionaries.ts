@@ -304,6 +304,9 @@ const en = {
     outlet: "Outlet",
     amount: "Bill amount (RM)",
     record: "Record purchase",
+    confirmPurchaseTitle: "Confirm purchase",
+    confirmPurchase: "Confirm",
+    cancelPurchase: "Cancel",
     recorded: (d: {
       name: string;
       points: number;
@@ -401,6 +404,17 @@ const en = {
     voucherCupsInvalid: "Cups needed must be a whole number from 1 to 200.",
     voucherCupsConflict: "Only one cups voucher can be active at a time.",
     voucherDaysInvalid: "Valid days must be a whole number from 1 to 3650.",
+  },
+  purchaseAlert: {
+    title: "Purchase recorded",
+    amountPaid: "Amount paid",
+    discount: "Voucher discount",
+    pointsEarned: "Points earned",
+    firstVisitBonus: "First visit bonus",
+    freeDrinksEarned: "Free drinks earned",
+    balance: "Your points",
+    cupsProgress: "Free drink progress",
+    done: "OK",
   },
   locale: {
     label: "Language",
@@ -709,6 +723,9 @@ const ms: Dict = {
     outlet: "Cawangan",
     amount: "Jumlah bil (RM)",
     record: "Rekod pembelian",
+    confirmPurchaseTitle: "Sahkan pembelian",
+    confirmPurchase: "Sahkan",
+    cancelPurchase: "Batal",
     recorded: (d: {
       name: string;
       points: number;
@@ -809,6 +826,17 @@ const ms: Dict = {
     voucherCupsInvalid: "Cawan diperlukan mesti nombor bulat 1 hingga 200.",
     voucherCupsConflict: "Hanya satu baucar cawan boleh aktif pada satu masa.",
     voucherDaysInvalid: "Hari sah mesti nombor bulat 1 hingga 3650.",
+  },
+  purchaseAlert: {
+    title: "Pembelian direkodkan",
+    amountPaid: "Jumlah dibayar",
+    discount: "Diskaun baucar",
+    pointsEarned: "Mata diperoleh",
+    firstVisitBonus: "Bonus lawatan pertama",
+    freeDrinksEarned: "Minuman percuma diperoleh",
+    balance: "Mata anda",
+    cupsProgress: "Kemajuan minuman percuma",
+    done: "OK",
   },
   locale: {
     label: "Bahasa",

@@ -2,16 +2,20 @@
 
 import { recordPurchaseAction } from "@/app/actions/admin";
 import { ActionForm } from "@/components/action-form";
+import { BottomSheet } from "@/components/bottom-sheet";
 import { Field } from "@/components/field";
+import { CloseIcon } from "@/components/icons";
 import { MemberLookupField } from "@/components/member-lookup-field";
-import { buttonClass, inputClass } from "@/components/ui";
-import { VoucherCodeProvider } from "@/components/voucher-code-context";
+import { SubmitButton } from "@/components/submit-button";
+import { buttonClass, iconButtonClass, inputClass } from "@/components/ui";
 import {
-  VoucherDiscountFields,
-  VoucherSubmitButton,
-} from "@/components/voucher-discount-fields";
+  VoucherCodeProvider,
+  useVoucherCode,
+} from "@/components/voucher-code-context";
+import { VoucherDiscountFields } from "@/components/voucher-discount-fields";
 import type { ActionState } from "@/lib/action-state";
 import { newRequestId } from "@/lib/form";
+import { formatRM } from "@/lib/format";
 import { useCallback, useRef, useState } from "react";
 
 export type PurchaseFormLabels = {
@@ -33,6 +37,10 @@ export type PurchaseFormLabels = {
   drinkPriceHint: string;
   voucherIncomplete: string;
   record: string;
+  confirmTitle: string;
+  confirm: string;
+  cancel: string;
+  close: string;
 };
 
 type Props = {
@@ -42,23 +50,87 @@ type Props = {
   labels: PurchaseFormLabels;
 };
 
+type SummaryRow = { label: string; value: string };
+
+// Reads the disabled discount field too, since cash vouchers fill it automatically.
+function readSummary(
+  form: HTMLFormElement,
+  labels: PurchaseFormLabels,
+  outletFallback: string,
+): SummaryRow[] {
+  const field = (name: string) =>
+    (form.elements.namedItem(name) as HTMLInputElement | null)?.value.trim() ??
+    "";
+  const outletField = form.elements.namedItem("outletId");
+  const outletName =
+    outletField instanceof HTMLSelectElement
+      ? (outletField.selectedOptions[0]?.text ?? "")
+      : outletFallback;
+  const ringgit = (value: string) => formatRM(Math.round(Number(value) * 100));
+  const code = field("voucher");
+  return [
+    { label: labels.member, value: field("member") },
+    { label: labels.outlet, value: outletName },
+    { label: labels.amount, value: ringgit(field("amount")) },
+    { label: labels.cups, value: field("cups") },
+    ...(code
+      ? [
+          { label: labels.code, value: code },
+          { label: labels.drinkPrice, value: ringgit(field("drinkPrice")) },
+        ]
+      : []),
+  ];
+}
+
+function ReviewButton({
+  label,
+  onReview,
+}: {
+  label: string;
+  onReview: (form: HTMLFormElement) => void;
+}) {
+  const { voucherBlocked } = useVoucherCode();
+  return (
+    <button
+      type="button"
+      disabled={voucherBlocked}
+      onClick={(event) => {
+        const form = event.currentTarget.form;
+        if (form) onReview(form);
+      }}
+      className={`${buttonClass("primary")} w-full`}
+    >
+      {label}
+    </button>
+  );
+}
+
 export function PurchaseForm({ outlet, outlets, loginPath, labels }: Props) {
   // Kept across failed attempts so a retry cannot record the same purchase twice.
   const requestIdRef = useRef<string | null>(null);
   // Changing the key clears the member, voucher, and amount fields after a success.
   const [round, setRound] = useState(0);
+  // Rows shown in the confirmation sheet; null while it is closed.
+  const [summary, setSummary] = useState<SummaryRow[] | null>(null);
 
   const submit = useCallback(async (state: ActionState, formData: FormData) => {
     requestIdRef.current ??= newRequestId();
     formData.set("requestId", requestIdRef.current);
     const result = await recordPurchaseAction(state, formData);
     if (result.ok) requestIdRef.current = null;
+    // Closes the sheet either way so the result message shows in the form.
+    setSummary(null);
     return result;
   }, []);
 
   const handleSuccess = useCallback(() => {
     setRound((n) => n + 1);
   }, []);
+
+  const review = (form: HTMLFormElement) => {
+    if (!form.reportValidity()) return;
+    setSummary(readSummary(form, labels, outlet?.name ?? ""));
+  };
 
   return (
     <ActionForm
@@ -129,9 +201,49 @@ export function PurchaseForm({ outlet, outlets, loginPath, labels }: Props) {
           incompleteLabel={labels.voucherIncomplete}
           lookupFailedLabel={labels.lookupFailed}
         />
-        <VoucherSubmitButton className={`${buttonClass("primary")} w-full`}>
-          {labels.record}
-        </VoucherSubmitButton>
+        <ReviewButton label={labels.record} onReview={review} />
+        <BottomSheet open={summary !== null} onClose={() => setSummary(null)}>
+          {summary ? (
+            <div className="space-y-5 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-lg font-semibold">{labels.confirmTitle}</p>
+                <button
+                  type="button"
+                  onClick={() => setSummary(null)}
+                  aria-label={labels.close}
+                  title={labels.close}
+                  className={iconButtonClass("secondary")}
+                >
+                  <CloseIcon className="h-4 w-4" />
+                </button>
+              </div>
+
+              <dl className="space-y-2 rounded-2xl bg-cream p-4 text-sm">
+                {summary.map((row) => (
+                  <div key={row.label} className="flex justify-between gap-4">
+                    <dt className="text-espresso/70">{row.label}</dt>
+                    <dd className="min-w-0 break-all text-right font-semibold tabular-nums">
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSummary(null)}
+                  className={buttonClass("secondary")}
+                >
+                  {labels.cancel}
+                </button>
+                <SubmitButton className={buttonClass("primary")}>
+                  {labels.confirm}
+                </SubmitButton>
+              </div>
+            </div>
+          ) : null}
+        </BottomSheet>
       </VoucherCodeProvider>
     </ActionForm>
   );
