@@ -1,7 +1,7 @@
 "use client";
 
 import { BottomSheet } from "@/components/bottom-sheet";
-import { BarcodeIcon, CloseIcon, VoucherKindIcon } from "@/components/icons";
+import { CloseIcon, QrCodeIcon, VoucherKindIcon } from "@/components/icons";
 import {
   buttonSmClass,
   cardClass,
@@ -80,7 +80,7 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
                   title={labels.scanAtStore}
                   className={iconButtonClass("primary")}
                 >
-                  <BarcodeIcon className="h-5 w-5" />
+                  <QrCodeIcon className="h-5 w-5" />
                 </button>
               </li>
             ))}
