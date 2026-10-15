@@ -113,7 +113,7 @@ export const voucherTypes = pgTable("voucher_types", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
   name: text("name").notNull(),
-  kind: text("kind").notNull(), // percent_off | amount_off | free_drink
+  kind: text("kind").notNull(), // percent_off | amount_off | free_drink | buy_one_free_one
   value: integer("value").notNull().default(0),
   pointsCost: integer("points_cost"),
   trigger: text("trigger").notNull(), // points_redeem | registration | birthday | cups

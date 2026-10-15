@@ -53,9 +53,9 @@ const en = {
       `+${points} point each for Instagram and TikTok`,
     rewardsTitle: "What you can get",
     rewardWelcomeTitle: "Welcome voucher",
-    rewardWelcomeValue: "50% off",
+    rewardWelcomeValue: "Buy 1 free 1",
     rewardWelcomeBody:
-      "Off your next purchase after you register. Valid 30 days.",
+      "Buy 1 free 1 on your next purchase after you register. Valid 30 days.",
     rewardBirthdayTitle: "Birthday treat",
     rewardBirthdayValue: "Free drink",
     rewardBirthdayBody: "A free drink on your birthday. Valid 30 days.",
@@ -167,6 +167,7 @@ const en = {
     percentOff: (v: number) => `${v}% off your bill`,
     amountOff: (rm: string) => `RM${rm} off your bill`,
     freeDrink: "One free drink",
+    buyOneFreeOne: "Buy 1 free 1",
     notEnough: (n: number) => `${n} more points needed`,
     created: "Voucher created. Show the QR code at the counter.",
     confirmRedeemTitle: "Confirm redeem",
@@ -328,7 +329,7 @@ const en = {
     code: "Voucher code",
     drinkPrice: "Discount Value (RM)",
     drinkPriceHint:
-      "Free drink voucher: enter the drink price. Cash voucher: filled in automatically.",
+      "Free drink or buy 1 free 1 voucher: enter the drink price. Cash voucher: filled in automatically.",
     recentPurchases: "Recent purchases",
     noPurchaseRecords: "No purchases recorded yet.",
     previousPage: "Previous",
@@ -381,6 +382,7 @@ const en = {
       percent_off: "Percent off",
       amount_off: "Amount off (RM)",
       free_drink: "Free drink",
+      buy_one_free_one: "Buy 1 free 1",
     },
     triggers: {
       points_redeem: "Customer redeems with points",
@@ -459,9 +461,9 @@ const ms: Dict = {
       `+${points} mata setiap satu untuk Instagram dan TikTok`,
     rewardsTitle: "Apa yang boleh anda dapat",
     rewardWelcomeTitle: "Baucar alu-aluan",
-    rewardWelcomeValue: "Diskaun 50%",
+    rewardWelcomeValue: "Beli 1 percuma 1",
     rewardWelcomeBody:
-      "Untuk pembelian seterusnya selepas mendaftar. Sah 30 hari.",
+      "Beli 1 percuma 1 pada pembelian seterusnya selepas mendaftar. Sah 30 hari.",
     rewardBirthdayTitle: "Hadiah hari lahir",
     rewardBirthdayValue: "Minuman percuma",
     rewardBirthdayBody: "Minuman percuma pada hari lahir anda. Sah 30 hari.",
@@ -568,6 +570,7 @@ const ms: Dict = {
     percentOff: (v: number) => `Diskaun ${v}% pada bil anda`,
     amountOff: (rm: string) => `Diskaun RM${rm} pada bil anda`,
     freeDrink: "Satu minuman percuma",
+    buyOneFreeOne: "Beli 1 percuma 1",
     notEnough: (n: number) => `Perlu ${n} mata lagi`,
     created: "Baucar dicipta. Tunjukkan kod QR di kaunter.",
     confirmRedeemTitle: "Sahkan tebusan",
@@ -733,7 +736,7 @@ const ms: Dict = {
     code: "Kod baucar",
     drinkPrice: "Nilai diskaun (RM)",
     drinkPriceHint:
-      "Baucar minuman percuma: masukkan harga minuman. Baucar tunai: diisi automatik.",
+      "Baucar minuman percuma atau beli 1 percuma 1: masukkan harga minuman. Baucar tunai: diisi automatik.",
     recentPurchases: "Pembelian terkini",
     noPurchaseRecords: "Belum ada pembelian direkodkan.",
     previousPage: "Sebelum",
@@ -787,6 +790,7 @@ const ms: Dict = {
       percent_off: "Diskaun peratus",
       amount_off: "Diskaun jumlah (RM)",
       free_drink: "Minuman percuma",
+      buy_one_free_one: "Beli 1 percuma 1",
     },
     triggers: {
       points_redeem: "Pelanggan tebus dengan mata",

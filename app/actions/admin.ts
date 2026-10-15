@@ -4,6 +4,7 @@ import type { ActionState } from "@/lib/action-state";
 import { verifyAdminPassword } from "@/lib/auth";
 import { getSettings, saveSettings, saveStaffPassword } from "@/lib/config";
 import {
+  isPricedFreeItemKind,
   STAFF_OUTLETS,
   VOUCHER_KINDS,
   VOUCHER_TRIGGERS,
@@ -299,7 +300,7 @@ async function savePurchase(
       if (!voucher) return { error: t.admin.voucherNotFound };
       const problem = voucherProblem(voucher, customer.id, now);
       if (problem) return { error: voucherProblemMessage(t, problem) };
-      if (voucher.kind === "free_drink") {
+      if (isPricedFreeItemKind(voucher.kind)) {
         const drink = moneyToCents(
           t.admin.errors.drinkPrice,
           t.admin.errors.drinkPrice,

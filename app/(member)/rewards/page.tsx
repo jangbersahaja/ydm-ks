@@ -55,6 +55,7 @@ export default async function RewardsPage({
     if (kind === "percent_off") return t.rewards.percentOff(value);
     if (kind === "amount_off")
       return t.rewards.amountOff((value / 100).toFixed(2));
+    if (kind === "buy_one_free_one") return t.rewards.buyOneFreeOne;
     return t.rewards.freeDrink;
   };
 

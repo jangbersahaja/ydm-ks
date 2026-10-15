@@ -1,5 +1,5 @@
 import { todayInKL } from "@/lib/birthday";
-import type { VoucherTrigger } from "@/lib/constants";
+import { isPricedFreeItemKind, type VoucherTrigger } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { redemptions, voucherTypes } from "@/lib/db/schema";
 import { and, asc, eq } from "drizzle-orm";
@@ -24,7 +24,7 @@ export function voucherDiscountCents(
 ) {
   if (kind === "percent_off") return Math.floor((amountCents * value) / 100);
   if (kind === "amount_off") return Math.min(value, amountCents);
-  if (kind === "free_drink") return Math.min(drinkPriceCents, amountCents);
+  if (isPricedFreeItemKind(kind)) return Math.min(drinkPriceCents, amountCents);
   return 0;
 }
 

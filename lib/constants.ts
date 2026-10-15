@@ -25,8 +25,14 @@ export const VOUCHER_KINDS = [
   "percent_off",
   "amount_off",
   "free_drink",
+  "buy_one_free_one",
 ] as const;
 export type VoucherKind = (typeof VOUCHER_KINDS)[number];
+
+// Kinds where staff enter the price of the free item at the counter.
+export function isPricedFreeItemKind(kind: string) {
+  return kind === "free_drink" || kind === "buy_one_free_one";
+}
 
 export const VOUCHER_TRIGGERS = [
   "points_redeem",
@@ -49,9 +55,9 @@ export const DEFAULT_VOUCHER_TYPES: {
 }[] = [
   {
     code: "signup_50",
-    name: "New member 50% off",
-    kind: "percent_off",
-    value: 50,
+    name: "New member buy 1 free 1",
+    kind: "buy_one_free_one",
+    value: 0,
     pointsCost: null,
     trigger: "registration",
     triggerCount: null,

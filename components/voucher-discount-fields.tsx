@@ -5,6 +5,7 @@ import { Field } from "@/components/field";
 import { SubmitButton } from "@/components/submit-button";
 import { inputClass } from "@/components/ui";
 import { useVoucherCode } from "@/components/voucher-code-context";
+import { isPricedFreeItemKind } from "@/lib/constants";
 import { useEffect, useState, type ReactNode } from "react";
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
   lookupFailedLabel: string;
 };
 
-// The discount field is enabled only for free drink vouchers and preset for cash vouchers.
+// The discount field is enabled only for free item vouchers and preset for cash vouchers.
 export function VoucherDiscountFields({
   codeLabel,
   discountLabel,
@@ -81,9 +82,9 @@ export function VoucherDiscountFields({
     status = <p className="text-xs text-accent">{incompleteLabel}</p>;
   }
 
-  const isFreeDrink = info?.kind === "free_drink";
+  const isFreeItem = !!info?.kind && isPricedFreeItemKind(info.kind);
   const isCash = info?.kind === "amount_off";
-  const shown = isFreeDrink
+  const shown = isFreeItem
     ? price
     : isCash && info
       ? (info.value / 100).toFixed(2)
@@ -112,8 +113,8 @@ export function VoucherDiscountFields({
           min="0"
           value={shown}
           onChange={(e) => setPrice(e.target.value)}
-          disabled={!isFreeDrink}
-          required={isFreeDrink}
+          disabled={!isFreeItem}
+          required={isFreeItem}
           className={inputClass}
         />
       </Field>
