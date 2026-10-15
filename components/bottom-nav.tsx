@@ -3,8 +3,13 @@
 import { pageWidthClass } from "@/components/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
 
-export type NavItem = { href: string; label: string };
+export type NavItem = {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+};
 
 export function BottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -17,6 +22,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
         {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const Icon = item.icon;
           return (
             <li key={item.href} className="min-w-0">
               <Link
@@ -28,6 +34,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
                     : "text-espresso/60 active:bg-espresso/5"
                 }`}
               >
+                <Icon className="h-5 w-5 shrink-0" />
                 <span className="truncate">{item.label}</span>
               </Link>
             </li>

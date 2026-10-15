@@ -1,4 +1,11 @@
 import { BottomNav } from "@/components/bottom-nav";
+import {
+  GiftIcon,
+  HistoryIcon,
+  HomeIcon,
+  ListCheckIcon,
+  UserIcon,
+} from "@/components/icons";
 import { PurchaseAlert } from "@/components/purchase-alert";
 import { SiteHeader } from "@/components/site-header";
 import { pageWidthClass } from "@/components/ui";
@@ -20,11 +27,11 @@ export default async function MemberLayout({
   const latestPurchaseId = await getLatestPurchaseId(customerId);
 
   const items = [
-    { href: "/dashboard", label: t.nav.home },
-    { href: "/tasks", label: t.nav.tasks },
-    { href: "/rewards", label: t.nav.rewards },
-    { href: "/history", label: t.nav.history },
-    { href: "/profile", label: t.nav.profile },
+    { href: "/dashboard", label: t.nav.home, icon: HomeIcon },
+    { href: "/tasks", label: t.nav.tasks, icon: ListCheckIcon },
+    { href: "/rewards", label: t.nav.rewards, icon: GiftIcon },
+    { href: "/history", label: t.nav.history, icon: HistoryIcon },
+    { href: "/profile", label: t.nav.profile, icon: UserIcon },
   ];
 
   return (

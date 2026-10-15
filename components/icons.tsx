@@ -57,6 +57,60 @@ export function BarcodeIcon(props: IconProps) {
   );
 }
 
+export function QrCodeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" />
+      <path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h.01" />
+    </Svg>
+  );
+}
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 11.5L12 4l9 7.5" />
+      <path d="M5.5 10.5V20h13v-9.5M9.5 20v-5h5v5" />
+    </Svg>
+  );
+}
+
+export function ListCheckIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M9 6h11M9 12h11M9 18h11" />
+      <path d="M3.5 6l1.5 1.5L7 5.5M3.5 12l1.5 1.5L7 11.5M3.5 18l1.5 1.5L7 17.5" />
+    </Svg>
+  );
+}
+
+export function GiftIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 10h16v10H4zM3 7h18v3H3zM12 7v13" />
+      <path d="M12 7H8.5a2.5 2.5 0 1 1 2.5-2.5C11 6 12 7 12 7zM12 7h3.5A2.5 2.5 0 1 0 13 4.5C13 6 12 7 12 7z" />
+    </Svg>
+  );
+}
+
+export function HistoryIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+      <path d="M4 4v4.5h4.5M12 8v4l2.5 1.5" />
+    </Svg>
+  );
+}
+
+export function UserIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20a7 7 0 0 1 14 0" />
+    </Svg>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <Svg {...props}>
