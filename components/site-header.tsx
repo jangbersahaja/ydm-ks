@@ -11,9 +11,9 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-espresso/10 bg-cream/90 backdrop-blur">
       <div
-        className={`${pageWidthClass} flex items-center justify-between gap-3 px-5 py-3`}
+        className={`${pageWidthClass} flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3`}
       >
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="text-base font-bold tracking-tight text-espresso">
             {t.brand}
           </span>
@@ -21,7 +21,7 @@ export async function SiteHeader() {
             {t.demo}
           </span>
         </Link>
-        <nav className="flex items-center gap-3 text-sm font-medium text-espresso">
+        <nav className="flex w-full items-center justify-end gap-3 text-sm font-medium text-espresso sm:w-auto">
           <Link href="/outlets" className="hidden sm:inline hover:text-roast">
             {t.nav.outlets}
           </Link>
