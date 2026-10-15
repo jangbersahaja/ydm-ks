@@ -30,7 +30,7 @@ export const customers = pgTable("customers", {
   memberCode: text("member_code")
     .notNull()
     .unique()
-    .default(sql`upper(substr(md5(random()::text), 1, 8))`),
+    .default(sql`upper(substr(md5(random()::text), 1, 12))`),
   cupsProgress: integer("cups_progress").notNull().default(0),
   createdAt: createdAt(),
 });

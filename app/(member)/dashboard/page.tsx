@@ -17,6 +17,7 @@ import { requireCustomerId } from "@/lib/session";
 import { ensureBirthdayVoucher } from "@/lib/vouchers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 const STAMP_LIMIT = 14;
 
@@ -29,6 +30,7 @@ export default async function DashboardPage() {
   const customer = await getCustomer(customerId);
   if (!customer) redirect("/login");
 
+  await connection();
   await ensureBirthdayVoucher(customer.id, customer.birthday);
 
   const [balance, settings, cupsRule, ledger, vouchers] = await Promise.all([
