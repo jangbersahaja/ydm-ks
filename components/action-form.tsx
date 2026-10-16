@@ -8,6 +8,7 @@ type Props = {
   action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   className?: string;
   children: ReactNode;
+  noValidate?: boolean;
   // Runs after each successful submit, e.g. to reset fields. Pass a stable callback.
   onSuccess?: () => void;
   // Where to send the user when the session has ended.
@@ -18,6 +19,7 @@ export function ActionForm({
   action,
   className,
   children,
+  noValidate,
   onSuccess,
   loginPath,
 }: Props) {
@@ -28,7 +30,7 @@ export function ActionForm({
     if (state.code === "session" && loginPath) router.replace(loginPath);
   }, [state, onSuccess, loginPath, router]);
   return (
-    <form action={formAction} className={className}>
+    <form action={formAction} className={className} noValidate={noValidate}>
       {children}
       {state.message ? (
         <p
