@@ -1,13 +1,13 @@
 "use client";
 
 import { BottomSheet } from "@/components/bottom-sheet";
-import { CloseIcon, QrCodeIcon, VoucherKindIcon } from "@/components/icons";
-import {
-  buttonSmClass,
-  cardClass,
-  iconButtonClass,
-  sectionTitleClass,
-} from "@/components/ui";
+import { EmptyState } from "@/components/brand/empty-state";
+import { IconTile } from "@/components/brand/icon-tile";
+import { ListGroup, ListRow } from "@/components/brand/list-row";
+import { SectionHeader } from "@/components/brand/section-header";
+import { SheetHeader } from "@/components/brand/sheet-header";
+import { QrCodeIcon, VoucherKindIcon } from "@/components/icons";
+import { buttonSmClass, iconButtonClass } from "@/components/ui";
 import { type ReactNode, useState } from "react";
 
 export type ActiveVoucherView = {
@@ -42,9 +42,6 @@ type VoucherListProps = {
   };
 };
 
-const iconTileClass =
-  "flex h-11 w-11 shrink-0 items-center justify-center rounded-full";
-
 const PAST_PAGE_SIZE = 5;
 
 export function VoucherList({ active, past, labels }: VoucherListProps) {
@@ -52,65 +49,61 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
   const [pastShown, setPastShown] = useState(PAST_PAGE_SIZE);
 
   if (active.length === 0 && past.length === 0) {
-    return <p className="text-sm text-espresso/70">{labels.emptyText}</p>;
+    return <EmptyState>{labels.emptyText}</EmptyState>;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {active.length > 0 ? (
-        <section className="space-y-3">
-          <h2 className={sectionTitleClass}>{labels.activeTitle}</h2>
-          <ul className="space-y-3">
+        <section className="space-y-2">
+          <SectionHeader title={labels.activeTitle} />
+          <ListGroup>
             {active.map((voucher) => (
-              <li
+              <ListRow
                 key={voucher.id}
-                className={`${cardClass} flex items-center gap-4`}
+                icon={
+                  <IconTile>
+                    <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
+                  </IconTile>
+                }
+                trailing={
+                  <button
+                    type="button"
+                    onClick={() => setSelected(voucher)}
+                    aria-label={labels.scanAtStore}
+                    title={labels.scanAtStore}
+                    className={iconButtonClass("primary")}
+                  >
+                    <QrCodeIcon className="h-5 w-5" />
+                  </button>
+                }
               >
-                <span className={`${iconTileClass} bg-roast/10 text-roast`}>
-                  <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold">{voucher.rewardName}</p>
-                  <p className="text-sm text-espresso/70">{voucher.validity}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelected(voucher)}
-                  aria-label={labels.scanAtStore}
-                  title={labels.scanAtStore}
-                  className={iconButtonClass("primary")}
-                >
-                  <QrCodeIcon className="h-5 w-5" />
-                </button>
-              </li>
+                <p className="font-bold">{voucher.rewardName}</p>
+                <p className="text-sm text-muted">{voucher.validity}</p>
+              </ListRow>
             ))}
-          </ul>
+          </ListGroup>
         </section>
       ) : null}
 
       {past.length > 0 ? (
         <section className="space-y-3">
-          <h2 className={sectionTitleClass}>{labels.pastTitle}</h2>
-          <ul className="space-y-3">
+          <SectionHeader title={labels.pastTitle} />
+          <ListGroup>
             {past.slice(0, pastShown).map((voucher) => (
-              <li
+              <ListRow
                 key={voucher.id}
-                className={`${cardClass} flex items-center gap-4`}
+                icon={
+                  <IconTile tone="muted">
+                    <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
+                  </IconTile>
+                }
               >
-                <span
-                  className={`${iconTileClass} bg-espresso/5 text-espresso/50`}
-                >
-                  <VoucherKindIcon kind={voucher.kind} className="h-5 w-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-espresso/70">
-                    {voucher.rewardName}
-                  </p>
-                  <p className="text-sm text-espresso/55">{voucher.detail}</p>
-                </div>
-              </li>
+                <p className="font-semibold text-muted">{voucher.rewardName}</p>
+                <p className="text-sm text-muted">{voucher.detail}</p>
+              </ListRow>
             ))}
-          </ul>
+          </ListGroup>
           {past.length > pastShown ? (
             <button
               type="button"
@@ -126,23 +119,13 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
       <BottomSheet open={selected !== null} onClose={() => setSelected(null)}>
         {selected ? (
           <div className="flex flex-col items-center gap-5 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-center">
-            <div className="flex w-full items-start justify-between gap-3">
-              <div className="min-w-0 text-left">
-                <p className="font-semibold">{selected.rewardName}</p>
-                <p className="text-sm text-espresso/70">
-                  {selected.description}
-                </p>
-              </div>
-              <button
-                type="button"
-                aria-label={labels.closeVoucher}
-                title={labels.closeVoucher}
-                onClick={() => setSelected(null)}
-                className={iconButtonClass("secondary")}
-              >
-                <CloseIcon className="h-4 w-4" />
-              </button>
-            </div>
+            <SheetHeader
+              closeLabel={labels.closeVoucher}
+              onClose={() => setSelected(null)}
+            >
+              <p className="font-semibold">{selected.rewardName}</p>
+              <p className="text-sm text-muted">{selected.description}</p>
+            </SheetHeader>
 
             {selected.qr}
 

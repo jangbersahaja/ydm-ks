@@ -2,14 +2,12 @@
 
 import { redeemVoucherTypeAction } from "@/app/actions/customer";
 import { BottomSheet } from "@/components/bottom-sheet";
-import {
-  ArrowIcon,
-  CheckIcon,
-  CloseIcon,
-  VoucherKindIcon,
-} from "@/components/icons";
+import { IconTile } from "@/components/brand/icon-tile";
+import { ProgressBar } from "@/components/brand/progress-bar";
+import { SheetHeader } from "@/components/brand/sheet-header";
+import { ArrowIcon, CheckIcon, VoucherKindIcon } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
-import { buttonClass, cardClass, iconButtonClass } from "@/components/ui";
+import { buttonClass, iconButtonClass } from "@/components/ui";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
@@ -36,9 +34,6 @@ export type RedeemCardProps = {
   labels: RedeemLabels;
 };
 
-const iconTileClass =
-  "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-roast/10 text-roast";
-
 export function RedeemVoucherCard(props: RedeemCardProps) {
   const {
     voucherTypeId,
@@ -56,14 +51,14 @@ export function RedeemVoucherCard(props: RedeemCardProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <li className={`${cardClass} flex flex-col gap-4`}>
+    <li className="flex flex-col gap-4 py-5">
       <div className="flex items-center gap-4">
-        <span className={iconTileClass}>
+        <IconTile>
           <VoucherKindIcon kind={kind} className="h-5 w-5" />
-        </span>
+        </IconTile>
         <div className="min-w-0 flex-1">
           <p className="font-semibold">{name}</p>
-          <p className="text-sm text-espresso/70">{description}</p>
+          <p className="text-sm text-muted">{description}</p>
           <p className="text-sm font-semibold text-roast">{costText}</p>
         </div>
         <button
@@ -80,19 +75,8 @@ export function RedeemVoucherCard(props: RedeemCardProps) {
 
       {notEnoughText ? (
         <div className="space-y-2">
-          <div
-            className="h-2 w-full overflow-hidden rounded-full bg-espresso/10"
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div
-              className="h-full rounded-full bg-roast"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="text-xs font-medium text-espresso/60 tabular-nums">
+          <ProgressBar percent={progress} label={name} />
+          <p className="text-xs font-medium tabular-nums text-muted">
             {notEnoughText}
           </p>
         </div>
@@ -137,7 +121,7 @@ function RedeemSheetBody({
   if (state.ok) {
     return (
       <div className="space-y-6 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success">
           <CheckIcon className="h-7 w-7" />
         </span>
         <p className="font-semibold">{state.message}</p>
@@ -162,26 +146,17 @@ function RedeemSheetBody({
       action={formAction}
       className="space-y-5 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]"
     >
-      <div className="flex items-start justify-between gap-3">
+      <SheetHeader closeLabel={labels.close} onClose={onClose}>
         <p className="text-lg font-semibold">{labels.confirmTitle}</p>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={labels.close}
-          title={labels.close}
-          className={iconButtonClass("secondary")}
-        >
-          <CloseIcon className="h-4 w-4" />
-        </button>
-      </div>
+      </SheetHeader>
 
       <div className="flex items-center gap-4 rounded-2xl bg-cream p-4">
-        <span className={iconTileClass}>
+        <IconTile>
           <VoucherKindIcon kind={kind} className="h-5 w-5" />
-        </span>
+        </IconTile>
         <div className="min-w-0">
           <p className="font-semibold">{name}</p>
-          <p className="text-sm text-espresso/70">{description}</p>
+          <p className="text-sm text-muted">{description}</p>
         </div>
       </div>
 

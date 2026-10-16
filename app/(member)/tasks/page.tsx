@@ -1,5 +1,8 @@
+import { Badge } from "@/components/brand/badge";
+import { ListGroup, ListRow } from "@/components/brand/list-row";
+import { ProgressBar } from "@/components/brand/progress-bar";
+import { SectionHeader } from "@/components/brand/section-header";
 import { TaskLink } from "@/components/task-link";
-import { cardClass, sectionTitleClass } from "@/components/ui";
 import { getTasksWithStatus } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
 import { taskTitle } from "@/lib/labels";
@@ -33,38 +36,33 @@ export default async function TasksPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t.tasks.title}</h1>
-        <p className="mt-1 text-sm text-espresso/70">{t.tasks.body}</p>
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          {t.tasks.title}
+        </h1>
+        <p className="text-sm text-muted">{t.tasks.body}</p>
       </div>
 
-      <section className={`${cardClass} space-y-3`}>
-        <div className="flex items-center justify-between text-sm font-semibold">
+      <section className="space-y-3">
+        <div className="flex items-center justify-between gap-3 text-sm font-semibold">
           <span>{t.tasks.summary(doneCount, totalCount)}</span>
           <span className="text-roast">{t.tasks.pointsLeft(pointsLeft)}</span>
         </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-espresso/10">
-          <div
-            className="h-full rounded-full bg-roast transition-all"
-            style={{ width: `${percent}%` }}
-          />
-        </div>
+        <ProgressBar
+          percent={percent}
+          label={t.tasks.summary(doneCount, totalCount)}
+        />
       </section>
 
       {[...outlets.values()].map((group) => (
-        <section key={group.name} className="space-y-3">
-          <h2 className={sectionTitleClass}>{group.name}</h2>
-          <ul className="space-y-3">
+        <section key={group.name} className="space-y-2">
+          <SectionHeader title={group.name} />
+          <ListGroup>
             {group.tasks.map((task) => (
-              <li key={task.id} className={cardClass}>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-semibold">{taskTitle(task.kind, t)}</p>
-                    <p className="mt-1 text-sm font-semibold text-roast">
-                      {t.tasks.points(task.points)}
-                    </p>
-                  </div>
+              <ListRow
+                key={task.id}
+                trailing={
                   <TaskLink
                     taskId={task.id}
                     url={task.url}
@@ -72,19 +70,24 @@ export default async function TasksPage() {
                     openLabel={t.tasks.open}
                     doneLabel={t.tasks.done}
                   />
-                </div>
-              </li>
+                }
+              >
+                <p className="font-semibold">{taskTitle(task.kind, t)}</p>
+                <p className="text-sm font-semibold text-roast">
+                  {t.tasks.points(task.points)}
+                </p>
+              </ListRow>
             ))}
-          </ul>
+          </ListGroup>
         </section>
       ))}
 
-      <section className={`${cardClass} opacity-70`}>
-        <h2 className={sectionTitleClass}>{t.tasks.surveyTitle}</h2>
-        <p className="mt-1 text-sm text-espresso/70">{t.tasks.surveyBody}</p>
-        <span className="mt-4 inline-block rounded-full bg-espresso/5 px-4 py-2 text-xs font-semibold text-espresso/60">
-          {t.tasks.comingSoon}
-        </span>
+      <section className="space-y-2 opacity-70">
+        <SectionHeader
+          title={t.tasks.surveyTitle}
+          action={<Badge>{t.tasks.comingSoon}</Badge>}
+        />
+        <p className="text-sm text-muted">{t.tasks.surveyBody}</p>
       </section>
     </div>
   );

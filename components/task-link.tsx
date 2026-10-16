@@ -35,7 +35,7 @@ export function TaskLink({ taskId, url, done, openLabel, doneLabel }: Props) {
         aria-label={label}
         title={label}
         className={`flex h-11 w-11 items-center justify-center rounded-full text-white transition active:scale-95 ${
-          done ? "bg-emerald-600" : "bg-roast"
+          done ? "bg-success" : "bg-roast"
         }`}
       >
         {done ? <CheckIcon /> : <ArrowIcon />}
@@ -43,7 +43,7 @@ export function TaskLink({ taskId, url, done, openLabel, doneLabel }: Props) {
       {result?.message ? (
         <p
           role="status"
-          className={`max-w-[12rem] text-right text-xs ${result.ok ? "text-emerald-700" : "text-accent"}`}
+          className={`max-w-[12rem] text-right text-xs ${result.ok ? "text-success" : "text-accent"}`}
         >
           {result.message}
         </p>

@@ -1,5 +1,4 @@
 import { PublicShell } from "@/components/public-shell";
-import { cardClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
 import { getCupsVoucherType } from "@/lib/db/queries";
 import { COMPANY } from "@/lib/legal";
@@ -69,30 +68,37 @@ export default async function FaqPage() {
 
   return (
     <PublicShell>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <header className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
             Frequently asked questions
           </h1>
-          <p className="text-espresso/70">
+          <p className="text-muted">
             Quick answers about YDM-KS-Points. The full rules are in our Terms &
             Conditions.
           </p>
         </header>
 
-        <section className="space-y-3">
+        <ul className="divide-y divide-espresso/10 border-y border-espresso/10">
           {faqs.map((item) => (
-            <details key={item.q} className={`${cardClass} group`}>
-              <summary className="cursor-pointer list-none font-semibold">
-                {item.q}
-              </summary>
-              <p className="mt-3 text-sm leading-6 text-espresso/80">
-                {item.a}
-              </p>
-            </details>
+            <li key={item.q}>
+              <details className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold [&::-webkit-details-marker]:hidden">
+                  {item.q}
+                  <span
+                    aria-hidden
+                    className="text-2xl font-normal leading-none text-roast transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 pr-8 text-sm leading-6 text-espresso/80">
+                  {item.a}
+                </p>
+              </details>
+            </li>
           ))}
-        </section>
-
+        </ul>
       </div>
     </PublicShell>
   );

@@ -66,6 +66,8 @@ async function PurchaseSection({
             amount: t.admin.amount,
             cups: t.admin.cups,
             cupsHint: t.admin.cupsHint,
+            cupsDecrease: t.admin.cupsDecrease,
+            cupsIncrease: t.admin.cupsIncrease,
             code: t.admin.code,
             drinkPrice: t.admin.drinkPrice,
             drinkPriceHint: t.admin.drinkPriceHint,

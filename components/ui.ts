@@ -46,7 +46,7 @@ export const cardClass =
   "rounded-2xl bg-white p-5 shadow-sm ring-1 ring-espresso/5";
 
 export const inputClass =
-  "min-h-12 w-full rounded-xl border border-espresso/15 bg-white px-4 py-3 text-base text-espresso placeholder:text-espresso/40 focus:border-roast focus:outline-none focus:ring-2 focus:ring-roast/30";
+  "min-h-12 w-full rounded-xl border border-espresso/15 bg-white px-4 py-3 text-base text-espresso placeholder:text-subtle focus:border-roast focus:outline-none focus:ring-2 focus:ring-roast/30";
 
 export const labelClass = "mb-1.5 block text-sm font-medium text-espresso";
 

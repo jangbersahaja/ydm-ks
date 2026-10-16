@@ -1,5 +1,4 @@
 import { PublicShell } from "@/components/public-shell";
-import { cardClass, sectionTitleClass } from "@/components/ui";
 import { COMPANY, LEGAL_VERSION } from "@/lib/legal";
 import { connection } from "next/server";
 
@@ -76,19 +75,24 @@ export default async function PrivacyPage() {
 
   return (
     <PublicShell>
-      <div className="space-y-6">
-        <header className="space-y-2">
+      <div className="space-y-8">
+        <header className="space-y-3">
           <p className="inline-block rounded-full bg-roast/10 px-3 py-1 text-xs font-semibold text-roast">
             Draft. Pending legal review before launch.
           </p>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
             Privacy Policy
           </h1>
         </header>
 
         {sections.map((section) => (
-          <section key={section.title} className={`${cardClass} space-y-3`}>
-            <h2 className={sectionTitleClass}>{section.title}</h2>
+          <section
+            key={section.title}
+            className="space-y-3 border-t border-espresso/10 pt-6"
+          >
+            <h2 className="text-lg font-bold tracking-tight">
+              {section.title}
+            </h2>
             {section.body.map((paragraph) => (
               <p key={paragraph} className="text-sm leading-6 text-espresso/80">
                 {paragraph}
@@ -97,7 +101,7 @@ export default async function PrivacyPage() {
           </section>
         ))}
 
-        <p className="text-xs text-espresso/60">Version {LEGAL_VERSION}</p>
+        <p className="text-xs text-muted">Version {LEGAL_VERSION}</p>
       </div>
     </PublicShell>
   );

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/brand/badge";
 import { LocaleToggle } from "@/components/locale-toggle";
 import { pageWidthClass } from "@/components/ui";
 import { getT } from "@/lib/i18n";
@@ -9,7 +10,7 @@ export async function SiteHeader() {
   const loggedIn = (await getCustomerId()) !== null;
 
   return (
-    <header className="sticky top-0 z-10 border-b border-espresso/10 bg-cream/90 backdrop-blur">
+    <header className="sticky top-0 z-10 border-b border-espresso/10 bg-latte/90 backdrop-blur">
       <div
         className={`${pageWidthClass} flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3`}
       >
@@ -17,9 +18,9 @@ export async function SiteHeader() {
           <span className="text-base font-bold tracking-tight text-espresso">
             {t.brand}
           </span>
-          <span className="rounded-full bg-latte/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-espresso">
+          <Badge className="text-[10px] uppercase tracking-wide">
             {t.demo}
-          </span>
+          </Badge>
         </Link>
         <nav className="flex w-full items-center justify-end gap-3 text-sm font-medium text-espresso sm:w-auto">
           <Link href="/outlets" className="hidden sm:inline hover:text-roast">

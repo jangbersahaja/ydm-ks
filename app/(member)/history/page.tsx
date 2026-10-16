@@ -1,4 +1,8 @@
-import { buttonSmClass, cardClass, sectionTitleClass } from "@/components/ui";
+import { EmptyState } from "@/components/brand/empty-state";
+import { ListGroup, ListRow } from "@/components/brand/list-row";
+import { SectionHeader } from "@/components/brand/section-header";
+import { SegmentedControl } from "@/components/brand/segmented-control";
+import { buttonSmClass } from "@/components/ui";
 import { getLedger, getPurchases } from "@/lib/db/queries";
 import { formatDateTime, formatRM } from "@/lib/format";
 import { getT } from "@/lib/i18n";
@@ -10,11 +14,6 @@ export const instant = false;
 
 const PAGE_SIZE = 10;
 
-const tabClass = (active: boolean) =>
-  `flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold transition ${
-    active ? "bg-white text-roast shadow-sm" : "text-espresso/60"
-  }`;
-
 const parsePage = (value: string | undefined) => {
   const n = Math.floor(Number(value));
   return n > 1 ? n : 1;
@@ -23,7 +22,11 @@ const parsePage = (value: string | undefined) => {
 export default async function HistoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; purchases?: string; activity?: string }>;
+  searchParams: Promise<{
+    tab?: string;
+    purchases?: string;
+    activity?: string;
+  }>;
 }) {
   const params = await searchParams;
   const activeTab = params.tab === "activity" ? "activity" : "purchases";
@@ -45,92 +48,93 @@ export default async function HistoryPage({
   const ledger = ledgerFetched.slice(0, activityLimit);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">{t.history.title}</h1>
+    <div className="space-y-8">
+      <h1 className="text-4xl font-extrabold tracking-tight">
+        {t.history.title}
+      </h1>
 
-      <div className="grid grid-cols-2 gap-1 rounded-2xl bg-espresso/5 p-1">
-        <Link
-          href={`/history?tab=purchases&purchases=${purchasePages}&activity=${activityPages}`}
-          aria-current={activeTab === "purchases" ? "page" : undefined}
-          className={tabClass(activeTab === "purchases")}
-        >
-          {t.history.purchases}
-        </Link>
-        <Link
-          href={`/history?tab=activity&purchases=${purchasePages}&activity=${activityPages}`}
-          aria-current={activeTab === "activity" ? "page" : undefined}
-          className={tabClass(activeTab === "activity")}
-        >
-          {t.history.activity}
-        </Link>
-      </div>
+      <SegmentedControl
+        items={[
+          {
+            href: `/history?tab=purchases&purchases=${purchasePages}&activity=${activityPages}`,
+            label: t.history.purchases,
+            active: activeTab === "purchases",
+          },
+          {
+            href: `/history?tab=activity&purchases=${purchasePages}&activity=${activityPages}`,
+            label: t.history.activity,
+            active: activeTab === "activity",
+          },
+        ]}
+      />
 
       {activeTab === "purchases" ? (
-        <section className="space-y-3">
-          <h2 className={sectionTitleClass}>{t.history.purchases}</h2>
+        <section className="space-y-2">
+          <SectionHeader title={t.history.purchases} />
           {purchaseRows.length === 0 ? (
-            <p className="text-sm text-espresso/70">{t.history.empty}</p>
+            <EmptyState>{t.history.empty}</EmptyState>
           ) : (
-            <ul className="space-y-3">
+            <ListGroup>
               {purchaseRows.map((row) => (
-                <li key={row.id} className={`${cardClass} space-y-1`}>
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-semibold">{row.outletName}</p>
-                    <p className="font-semibold text-roast">
+                <ListRow
+                  key={row.id}
+                  trailing={
+                    <p className="shrink-0 font-bold text-roast">
                       {t.history.earned(row.points)}
                     </p>
-                  </div>
-                  <p className="text-sm text-espresso/70">
+                  }
+                >
+                  <p className="font-semibold">{row.outletName}</p>
+                  <p className="text-sm text-muted">
                     {t.history.amount}: {formatRM(row.amountCents)}
                   </p>
-                  <p className="text-xs text-espresso/55">
+                  <p className="text-xs text-muted">
                     {formatDateTime(row.createdAt, locale)}
                   </p>
-                </li>
+                </ListRow>
               ))}
-            </ul>
+            </ListGroup>
           )}
           {hasMorePurchases ? (
             <Link
               href={`/history?tab=purchases&purchases=${purchasePages + 1}&activity=${activityPages}`}
               scroll={false}
-              className={buttonSmClass("secondary", "w-full")}
+              className={`${buttonSmClass("secondary", "w-full")} mt-4`}
             >
               {t.history.showMore}
             </Link>
           ) : null}
         </section>
       ) : (
-        <section className="space-y-3">
-          <h2 className={sectionTitleClass}>{t.history.activity}</h2>
+        <section className="space-y-2">
+          <SectionHeader title={t.history.activity} />
           {ledger.length === 0 ? (
-            <p className="text-sm text-espresso/70">{t.history.empty}</p>
+            <EmptyState>{t.history.empty}</EmptyState>
           ) : (
-            <ul className="space-y-3">
+            <ListGroup>
               {ledger.map((row) => (
-                <li
+                <ListRow
                   key={row.id}
-                  className={`${cardClass} flex items-center justify-between gap-3 py-4`}
-                >
-                  <div>
-                    <p className="font-medium">{ledgerLabel(row.reason, t)}</p>
-                    <p className="text-xs text-espresso/55">
-                      {formatDateTime(row.createdAt, locale)}
+                  trailing={
+                    <p className="shrink-0 font-bold">
+                      {row.delta > 0 ? "+" : ""}
+                      {row.delta}
                     </p>
-                  </div>
-                  <p className="font-semibold">
-                    {row.delta > 0 ? "+" : ""}
-                    {row.delta}
+                  }
+                >
+                  <p className="font-medium">{ledgerLabel(row.reason, t)}</p>
+                  <p className="text-xs text-muted">
+                    {formatDateTime(row.createdAt, locale)}
                   </p>
-                </li>
+                </ListRow>
               ))}
-            </ul>
+            </ListGroup>
           )}
           {hasMoreActivity ? (
             <Link
               href={`/history?tab=activity&purchases=${purchasePages}&activity=${activityPages + 1}`}
               scroll={false}
-              className={buttonSmClass("secondary", "w-full")}
+              className={`${buttonSmClass("secondary", "w-full")} mt-4`}
             >
               {t.history.showMore}
             </Link>

@@ -1,6 +1,10 @@
+import { EmptyState } from "@/components/brand/empty-state";
+import { ListGroup, ListRow } from "@/components/brand/list-row";
+import { ProgressBar } from "@/components/brand/progress-bar";
+import { SectionHeader } from "@/components/brand/section-header";
 import { ArrowIcon } from "@/components/icons";
 import { QrCode } from "@/components/qr-code";
-import { cardClass, iconButtonClass, sectionTitleClass } from "@/components/ui";
+import { iconButtonClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
 import {
   getBalance,
@@ -53,24 +57,81 @@ export default async function DashboardPage() {
   const firstName = customer.name.trim().split(/\s+/)[0] ?? customer.name;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-center text-3xl font-bold tracking-tight">
+    <div className="space-y-10">
+      <h1 className="text-4xl font-extrabold tracking-tight">
         {t.dashboard.greeting(firstName)}
       </h1>
 
-      <section
-        className={`${cardClass} flex flex-col items-center gap-4 text-center`}
-      >
+      <section className="space-y-6 rounded-3xl bg-roast p-6 text-cream sm:p-8">
+        <div className="flex items-end justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold uppercase tracking-wide">
+              {t.dashboard.balance}
+            </p>
+            <p className="text-7xl font-extrabold leading-none tracking-tight tabular-nums">
+              {balance}
+            </p>
+          </div>
+          <p className="text-right text-xs">
+            {t.landing.pointsLine(settings.pointsPerRinggit)}
+          </p>
+        </div>
+
+        {cupsTarget > 0 ? (
+          <div className="space-y-3">
+            <div className="flex items-end justify-between gap-3">
+              <p className="font-semibold">{t.dashboard.cupsTitle}</p>
+              <p className="text-sm tabular-nums">
+                {t.dashboard.cupsProgress(cupsProgress, cupsTarget)}
+              </p>
+            </div>
+            <ProgressBar
+              percent={cupsPercent}
+              tone="cream"
+              label={t.dashboard.cupsTitle}
+            />
+            <p className="text-sm font-semibold">
+              {t.dashboard.cupsToNext(cupsTarget - cupsProgress)}
+            </p>
+            <p className="text-xs">{t.dashboard.cupsHint}</p>
+          </div>
+        ) : null}
+
+        {readyCount > 0 ? (
+          <Link
+            href="/rewards"
+            className="flex items-center justify-between gap-3 rounded-2xl bg-cream px-4 py-3.5 text-roast transition active:scale-[0.99]"
+          >
+            <span className="font-bold">
+              {t.dashboard.vouchersReady(readyCount)}
+            </span>
+            <ArrowIcon className="h-5 w-5 shrink-0" />
+          </Link>
+        ) : (
+          <div className="flex justify-end">
+            <Link
+              href="/rewards"
+              aria-label={t.dashboard.viewRewards}
+              title={t.dashboard.viewRewards}
+              className={iconButtonClass("secondary")}
+            >
+              <ArrowIcon />
+            </Link>
+          </div>
+        )}
+      </section>
+
+      <section className="flex flex-col items-center gap-4 text-center">
         <div>
-          <p className="font-semibold">{t.dashboard.memberTitle}</p>
-          <p className="text-sm text-espresso/65">{t.dashboard.memberHint}</p>
+          <p className="font-bold">{t.dashboard.memberTitle}</p>
+          <p className="text-sm text-muted">{t.dashboard.memberHint}</p>
         </div>
         <QrCode
           value={customer.memberCode}
           size={600}
-          className="block h-auto w-full rounded-xl bg-white p-2"
+          className="block h-auto w-full max-w-64 rounded-2xl bg-white p-3"
         />
-        <p className="text-xs text-espresso/60">
+        <p className="text-xs text-muted">
           {t.dashboard.memberCode}:{" "}
           <span className="font-mono font-semibold tracking-widest">
             {customer.memberCode}
@@ -78,109 +139,42 @@ export default async function DashboardPage() {
         </p>
       </section>
 
-      <section className={`${cardClass} space-y-5`}>
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <p className="text-sm text-espresso/60">{t.dashboard.balance}</p>
-            <p className="text-5xl font-bold tracking-tight tabular-nums text-roast">
-              {balance}
-            </p>
-          </div>
-          <p className="text-right text-xs text-espresso/60">
-            {t.landing.pointsLine(settings.pointsPerRinggit)}
-          </p>
-        </div>
-
-        {cupsTarget > 0 ? (
-          <div className="space-y-3 border-t border-espresso/10 pt-5">
-            <div className="flex items-end justify-between gap-3">
-              <p className="font-semibold">{t.dashboard.cupsTitle}</p>
-              <p className="text-sm text-espresso/60 tabular-nums">
-                {t.dashboard.cupsProgress(cupsProgress, cupsTarget)}
-              </p>
-            </div>
-            <div
-              className="h-3 w-full overflow-hidden rounded-full bg-espresso/10"
-              role="progressbar"
-              aria-valuenow={cupsPercent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className="h-full rounded-full bg-roast transition-[width] duration-500"
-                style={{ width: `${cupsPercent}%` }}
-              />
-            </div>
-            <p className="text-sm font-medium">
-              {t.dashboard.cupsToNext(cupsTarget - cupsProgress)}
-            </p>
-            <p className="text-xs text-espresso/55">{t.dashboard.cupsHint}</p>
-          </div>
-        ) : null}
-
-        <div className="border-t border-espresso/10 pt-5">
-          {readyCount > 0 ? (
-            <Link
-              href="/rewards"
-              className="flex items-center justify-between gap-3 rounded-2xl bg-roast px-4 py-3.5 text-cream shadow-md ring-4 ring-roast/20 transition active:scale-[0.99]"
-            >
-              <span className="font-semibold">
-                {t.dashboard.vouchersReady(readyCount)}
-              </span>
-              <ArrowIcon className="h-5 w-5 shrink-0" />
+      <section className="space-y-2">
+        <SectionHeader
+          title={t.dashboard.recent}
+          action={
+            <Link href="/tasks" className="text-sm font-semibold text-roast">
+              {t.dashboard.earnMore}
             </Link>
-          ) : (
-            <div className="flex justify-end">
-              <Link
-                href="/rewards"
-                aria-label={t.dashboard.viewRewards}
-                title={t.dashboard.viewRewards}
-                className={iconButtonClass("primary")}
-              >
-                <ArrowIcon />
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className={sectionTitleClass}>{t.dashboard.recent}</h2>
-          <Link href="/tasks" className="text-sm font-semibold text-roast">
-            {t.dashboard.earnMore}
-          </Link>
-        </div>
+          }
+        />
 
         {ledger.length === 0 ? (
-          <p className="text-sm text-espresso/70">{t.dashboard.empty}</p>
+          <EmptyState>{t.dashboard.empty}</EmptyState>
         ) : (
-          <ul className="space-y-3">
+          <ListGroup>
             {ledger.map((row) => (
-              <li
+              <ListRow
                 key={row.id}
-                className={`${cardClass} flex items-center justify-between gap-3 py-4`}
-              >
-                <div>
-                  <p className="font-medium">{ledgerLabel(row.reason, t)}</p>
-                  <p className="text-xs text-espresso/55">
-                    {formatDateTime(row.createdAt, locale)}
+                trailing={
+                  <p
+                    className={`shrink-0 font-bold ${row.delta >= 0 ? "text-success" : "text-espresso"}`}
+                  >
+                    {row.delta > 0 ? "+" : ""}
+                    {row.delta}
                   </p>
-                </div>
-                <p
-                  className={`font-semibold ${row.delta >= 0 ? "text-emerald-700" : "text-espresso"}`}
-                >
-                  {row.delta > 0 ? "+" : ""}
-                  {row.delta}
+                }
+              >
+                <p className="font-medium">{ledgerLabel(row.reason, t)}</p>
+                <p className="text-xs text-muted">
+                  {formatDateTime(row.createdAt, locale)}
                 </p>
-              </li>
+              </ListRow>
             ))}
-          </ul>
+          </ListGroup>
         )}
 
-        <p className="pt-2 text-xs text-espresso/55">
-          {t.dashboard.sharedNote}
-        </p>
+        <p className="pt-2 text-xs text-muted">{t.dashboard.sharedNote}</p>
       </section>
     </div>
   );

@@ -33,7 +33,7 @@ export function ActionForm({
       {state.message ? (
         <p
           role="status"
-          className={`mt-3 text-sm ${state.ok ? "text-emerald-700" : "text-accent"}`}
+          className={`mt-3 text-sm ${state.ok ? "text-success" : "text-accent"}`}
         >
           {state.message}
         </p>

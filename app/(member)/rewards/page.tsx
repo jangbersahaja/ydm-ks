@@ -1,6 +1,9 @@
+import { EmptyState } from "@/components/brand/empty-state";
+import { ListGroup } from "@/components/brand/list-row";
+import { SectionHeader } from "@/components/brand/section-header";
+import { SegmentedControl } from "@/components/brand/segmented-control";
 import { QrCode } from "@/components/qr-code";
 import { RedeemVoucherCard } from "@/components/redeem-voucher-card";
-import { cardClass, sectionTitleClass } from "@/components/ui";
 import {
   type ActiveVoucherView,
   type PastVoucherView,
@@ -16,15 +19,9 @@ import { formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n";
 import { requireCustomerId } from "@/lib/session";
 import { ensureBirthdayVoucher } from "@/lib/vouchers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const instant = false;
-
-const tabClass = (active: boolean) =>
-  `flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold transition ${
-    active ? "bg-white text-roast shadow-sm" : "text-espresso/60"
-  }`;
 
 export default async function RewardsPage({
   searchParams,
@@ -113,48 +110,46 @@ export default async function RewardsPage({
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t.rewards.title}</h1>
-        <p className="mt-1 text-sm text-espresso/70">{t.rewards.body}</p>
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          {t.rewards.title}
+        </h1>
+        <p className="text-sm text-muted">{t.rewards.body}</p>
       </div>
 
-      <section className={`${cardClass}`}>
-        <p className="text-sm text-espresso/60">{t.rewards.balance}</p>
-        <p className="text-4xl font-bold tracking-tight tabular-nums text-roast">
+      <div className="space-y-1">
+        <p className="text-sm font-semibold uppercase tracking-wide text-muted">
+          {t.rewards.balance}
+        </p>
+        <p className="text-6xl font-extrabold leading-none tracking-tight tabular-nums text-roast">
           {balance}
         </p>
-      </section>
-
-      <div className="grid grid-cols-2 gap-1 rounded-2xl bg-espresso/5 p-1">
-        <Link
-          href="/rewards?tab=points"
-          aria-current={activeTab === "points" ? "page" : undefined}
-          className={tabClass(activeTab === "points")}
-        >
-          {t.rewards.redeem}
-        </Link>
-        <Link
-          href="/rewards?tab=vouchers"
-          aria-current={activeTab === "vouchers" ? "page" : undefined}
-          className={tabClass(activeTab === "vouchers")}
-        >
-          {t.rewards.vouchers}
-          {activeVouchers.length > 0 ? (
-            <span className="ml-2 rounded-full bg-roast px-2 py-0.5 text-xs text-white tabular-nums">
-              {activeVouchers.length}
-            </span>
-          ) : null}
-        </Link>
       </div>
 
+      <SegmentedControl
+        items={[
+          {
+            href: "/rewards?tab=points",
+            label: t.rewards.redeem,
+            active: activeTab === "points",
+          },
+          {
+            href: "/rewards?tab=vouchers",
+            label: t.rewards.vouchers,
+            active: activeTab === "vouchers",
+            badge: activeVouchers.length,
+          },
+        ]}
+      />
+
       {activeTab === "points" ? (
-        <section className="space-y-3">
-          <h2 className={sectionTitleClass}>{t.rewards.pointsTitle}</h2>
+        <section className="space-y-2">
+          <SectionHeader title={t.rewards.pointsTitle} />
           {pointTypes.length === 0 ? (
-            <p className="text-sm text-espresso/70">{t.rewards.pointsEmpty}</p>
+            <EmptyState>{t.rewards.pointsEmpty}</EmptyState>
           ) : (
-            <ul className="space-y-3">
+            <ListGroup>
               {pointTypes.map((type) => {
                 const cost = type.pointsCost ?? 0;
                 const canRedeem = balance >= cost;
@@ -181,7 +176,7 @@ export default async function RewardsPage({
                   />
                 );
               })}
-            </ul>
+            </ListGroup>
           )}
         </section>
       ) : (

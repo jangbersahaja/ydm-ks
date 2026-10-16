@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
-/* Placeholder palette. Replace with brand hex values once screenshots/colors arrive. */
+/* Brand values from kopisaigon.com. Espresso, accent (error red), and success are not from the site. */
 @theme inline {
-  --color-cream: #f7f0e6;
-  --color-espresso: #2a1b14;
-  --color-roast: #7a4a2e;
-  --color-latte: #d9b99b;
+  --color-cream: #f3e8d7;
+  --color-espresso: #2b1a10;
+  --color-roast: #783819;
+  --color-latte: #e6b549;
+  --color-canvas: #f3dca0;
+  --color-muted: #5e4530;
+  --color-subtle: #857259;
   --color-accent: #b03a2e;
-  --font-sans: Arial, Helvetica, sans-serif;
+  --color-success: #15803d;
+  --font-sans: var(--font-archivo), Arial, Helvetica, sans-serif;
   --font-mono: monospace;
 }
 
@@ -17,11 +21,18 @@ html {
 }
 
 body {
-  background: var(--color-cream);
+  background: var(--color-canvas);
   color: var(--color-espresso);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Opacity-based muted text falls below WCAG AA on light surfaces; use a solid tone. */
+.text-espresso\/55,
+.text-espresso\/60,
+.text-espresso\/65 {
+  color: var(--color-muted);
 }
 
 a,

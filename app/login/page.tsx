@@ -1,9 +1,10 @@
 import { loginAction } from "@/app/actions/auth";
 import { ActionForm } from "@/components/action-form";
+import { Surface } from "@/components/brand/surface";
 import { Field } from "@/components/field";
 import { PublicShell } from "@/components/public-shell";
 import { SubmitButton } from "@/components/submit-button";
-import { buttonClass, cardClass, inputClass } from "@/components/ui";
+import { buttonClass, inputClass } from "@/components/ui";
 import { getT } from "@/lib/i18n";
 import Link from "next/link";
 
@@ -15,12 +16,12 @@ export default async function LoginPage() {
   return (
     <PublicShell>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
           {t.auth.loginTitle}
         </h1>
-        <p className="mt-2 text-espresso/70">{t.auth.loginBody}</p>
+        <p className="mt-2 text-muted">{t.auth.loginBody}</p>
 
-        <div className={`${cardClass} mt-6`}>
+        <Surface variant="panel" className="mt-6">
           <ActionForm action={loginAction} className="space-y-4">
             <Field label={t.auth.phone} hint={t.auth.phoneHint}>
               <input
@@ -46,7 +47,7 @@ export default async function LoginPage() {
               {t.auth.loginCta}
             </SubmitButton>
           </ActionForm>
-        </div>
+        </Surface>
 
         <p className="mt-4 text-sm">
           <Link href="/register" className="font-semibold text-roast">

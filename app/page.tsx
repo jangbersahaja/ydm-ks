@@ -1,5 +1,8 @@
+import { Badge } from "@/components/brand/badge";
+import { FeatureItem } from "@/components/brand/feature-item";
+import { SectionHeader } from "@/components/brand/section-header";
 import { PublicShell } from "@/components/public-shell";
-import { buttonClass, cardClass, sectionTitleClass } from "@/components/ui";
+import { buttonClass } from "@/components/ui";
 import { getSettings } from "@/lib/config";
 import { getActiveTaskPoints, getCupsVoucherType } from "@/lib/db/queries";
 import { getT } from "@/lib/i18n";
@@ -84,99 +87,88 @@ export default async function HomePage() {
 
   return (
     <PublicShell showLegalLinks>
-      <section className="grid items-center gap-10 md:grid-cols-2">
-        <div className="space-y-5">
-          <p className="text-sm font-semibold uppercase tracking-wide text-roast">
-            {t.programName}
-          </p>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            {t.landing.heroTitle}
-          </h1>
-          <p className="text-base text-espresso/75 sm:text-lg">
-            {t.landing.heroBody}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <p className="inline-block rounded-full bg-latte/50 px-4 py-2 text-sm font-semibold">
-              {t.landing.pointsLine(pointsPerRinggit)}
-            </p>
-            {cupsTarget > 0 ? (
-              <p className="inline-block rounded-full bg-latte/50 px-4 py-2 text-sm font-semibold">
-                {t.landing.cupsLine(cupsTarget)}
-              </p>
-            ) : null}
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link
-              href={loggedIn ? "/dashboard" : "/register"}
-              className={`${buttonClass("primary")} w-full sm:w-auto`}
-            >
-              {loggedIn ? t.nav.dashboard : t.landing.join}
-            </Link>
-            <Link
-              href="/outlets"
-              className={`${buttonClass("secondary")} w-full sm:w-auto`}
-            >
-              {t.landing.viewOutlets}
-            </Link>
-          </div>
+      <section className="space-y-6 py-4">
+        <p className="text-sm font-bold uppercase tracking-wide text-roast">
+          {t.programName}
+        </p>
+        <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
+          {t.landing.heroTitle}
+        </h1>
+        <p className="max-w-xl text-base text-muted sm:text-lg">
+          {t.landing.heroBody}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Badge>{t.landing.pointsLine(pointsPerRinggit)}</Badge>
+          {cupsTarget > 0 ? (
+            <Badge>{t.landing.cupsLine(cupsTarget)}</Badge>
+          ) : null}
         </div>
-
-        <div className={`${cardClass} space-y-5`}>
-          <h2 className={sectionTitleClass}>{t.landing.howTitle}</h2>
-          <ol className="space-y-4">
-            {steps.map((step, index) => (
-              <li key={step.title} className="flex gap-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-roast text-sm font-bold text-cream">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="font-semibold">{step.title}</p>
-                  <p className="text-sm text-espresso/70">{step.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link
+            href={loggedIn ? "/dashboard" : "/register"}
+            className={`${buttonClass("primary")} w-full sm:w-auto`}
+          >
+            {loggedIn ? t.nav.dashboard : t.landing.join}
+          </Link>
+          <Link
+            href="/outlets"
+            className={`${buttonClass("secondary")} w-full sm:w-auto`}
+          >
+            {t.landing.viewOutlets}
+          </Link>
         </div>
       </section>
 
-      <section className="mt-14 space-y-5">
-        <h2 className={sectionTitleClass}>{t.landing.earnTitle}</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <section className="mt-16 space-y-6">
+        <SectionHeader title={t.landing.earnTitle} />
+        <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
           {earnCards.map((card) => (
-            <div key={card.title} className={cardClass}>
-              <p className="font-semibold">{card.title}</p>
-              <p className="mt-1 text-sm text-espresso/70">{card.body}</p>
-            </div>
+            <FeatureItem key={card.title} title={card.title}>
+              {card.body}
+            </FeatureItem>
           ))}
         </div>
       </section>
 
-      <section className="mt-14 space-y-5">
-        <h2 className={sectionTitleClass}>{t.landing.rewardsTitle}</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <section className="mt-16 space-y-6">
+        <SectionHeader title={t.landing.rewardsTitle} />
+        <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
           {rewardCards.map((card) => (
-            <div key={card.title} className={`${cardClass} space-y-2`}>
-              <p className="text-3xl font-bold tracking-tight text-roast">
-                {card.value}
-              </p>
-              <p className="font-semibold">{card.title}</p>
-              <p className="text-sm text-espresso/70">{card.body}</p>
-            </div>
+            <FeatureItem key={card.title} value={card.value} title={card.title}>
+              {card.body}
+            </FeatureItem>
           ))}
         </div>
+      </section>
+
+      <section className="mt-16 space-y-6 rounded-3xl bg-roast p-6 text-cream sm:p-8">
+        <h2 className="text-2xl font-extrabold tracking-tight">
+          {t.landing.howTitle}
+        </h2>
+        <ol className="space-y-6">
+          {steps.map((step, index) => (
+            <li key={step.title} className="flex gap-4">
+              <span className="text-4xl font-extrabold leading-none tabular-nums text-latte">
+                {index + 1}
+              </span>
+              <div className="space-y-1">
+                <p className="font-bold">{step.title}</p>
+                <p className="text-sm leading-6">{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {loggedIn ? null : (
-        <section className="mt-14 rounded-2xl bg-roast p-6 text-cream sm:p-8">
-          <div className="max-w-xl space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">
-              {t.landing.joinTitle}
-            </h2>
-            <p className="text-cream/85">{t.auth.welcomePerk}</p>
-            <Link href="/register" className={buttonClass("secondary")}>
-              {t.landing.join}
-            </Link>
-          </div>
+        <section className="mt-16 space-y-4">
+          <h2 className="text-3xl font-extrabold tracking-tight">
+            {t.landing.joinTitle}
+          </h2>
+          <p className="max-w-xl text-muted">{t.auth.welcomePerk}</p>
+          <Link href="/register" className={buttonClass("primary")}>
+            {t.landing.join}
+          </Link>
         </section>
       )}
     </PublicShell>

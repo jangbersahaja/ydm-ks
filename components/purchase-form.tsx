@@ -4,10 +4,15 @@ import { recordPurchaseAction } from "@/app/actions/admin";
 import { ActionForm } from "@/components/action-form";
 import { BottomSheet } from "@/components/bottom-sheet";
 import { Field } from "@/components/field";
-import { CloseIcon } from "@/components/icons";
+import { CloseIcon, MinusIcon, PlusIcon } from "@/components/icons";
 import { MemberLookupField } from "@/components/member-lookup-field";
 import { SubmitButton } from "@/components/submit-button";
-import { buttonClass, iconButtonClass, inputClass } from "@/components/ui";
+import {
+  buttonClass,
+  iconButtonClass,
+  inputClass,
+  labelClass,
+} from "@/components/ui";
 import {
   VoucherCodeProvider,
   useVoucherCode,
@@ -16,7 +21,7 @@ import { VoucherDiscountFields } from "@/components/voucher-discount-fields";
 import type { ActionState } from "@/lib/action-state";
 import { newRequestId } from "@/lib/form";
 import { formatRM } from "@/lib/format";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
 export type PurchaseFormLabels = {
   member: string;
@@ -32,6 +37,8 @@ export type PurchaseFormLabels = {
   amount: string;
   cups: string;
   cupsHint: string;
+  cupsDecrease: string;
+  cupsIncrease: string;
   code: string;
   drinkPrice: string;
   drinkPriceHint: string;
@@ -102,6 +109,75 @@ function ReviewButton({
     >
       {label}
     </button>
+  );
+}
+
+const MAX_CUPS = 50;
+
+// Typing still works. Remounts with the form round, so it resets to 1 after each success.
+function CupsStepper({
+  label,
+  hint,
+  decreaseLabel,
+  increaseLabel,
+}: {
+  label: string;
+  hint: string;
+  decreaseLabel: string;
+  increaseLabel: string;
+}) {
+  const id = useId();
+  const [raw, setRaw] = useState("1");
+  const current = Math.min(MAX_CUPS, Math.max(0, Math.round(Number(raw) || 0)));
+  const step = (delta: number) =>
+    setRaw(String(Math.min(MAX_CUPS, Math.max(0, current + delta))));
+
+  return (
+    <div>
+      <label htmlFor={id} className={labelClass}>
+        {label}
+      </label>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          aria-label={decreaseLabel}
+          title={decreaseLabel}
+          disabled={current <= 0}
+          onClick={() => step(-1)}
+          className={iconButtonClass("secondary")}
+        >
+          <MinusIcon className="h-5 w-5" />
+        </button>
+        <input
+          id={id}
+          name="cups"
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={MAX_CUPS}
+          step={1}
+          required
+          value={raw}
+          onChange={(event) => setRaw(event.target.value)}
+          onFocus={(event) => event.target.select()}
+          onBlur={() => setRaw(String(current))}
+          className={`${inputClass} text-center font-semibold tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+        />
+        <button
+          type="button"
+          aria-label={increaseLabel}
+          title={increaseLabel}
+          disabled={current >= MAX_CUPS}
+          onClick={() => step(1)}
+          className={iconButtonClass("primary")}
+        >
+          <PlusIcon className="h-5 w-5" />
+        </button>
+      </div>
+      {hint ? (
+        <span className="mt-1 block text-xs text-espresso/55">{hint}</span>
+      ) : null}
+    </div>
   );
 }
 
@@ -181,19 +257,12 @@ export function PurchaseForm({ outlet, outlets, loginPath, labels }: Props) {
             className={inputClass}
           />
         </Field>
-        <Field label={labels.cups} hint={labels.cupsHint}>
-          <input
-            name="cups"
-            type="number"
-            inputMode="numeric"
-            min={0}
-            max={50}
-            step={1}
-            defaultValue={0}
-            required
-            className={inputClass}
-          />
-        </Field>
+        <CupsStepper
+          label={labels.cups}
+          hint={labels.cupsHint}
+          decreaseLabel={labels.cupsDecrease}
+          increaseLabel={labels.cupsIncrease}
+        />
         <VoucherDiscountFields
           codeLabel={labels.code}
           discountLabel={labels.drinkPrice}

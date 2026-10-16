@@ -98,7 +98,7 @@ export function VoucherTypeManager({
             <span
               aria-hidden="true"
               className={`absolute left-2.5 top-2.5 h-2.5 w-2.5 rounded-full ${
-                type.active ? "bg-emerald-500" : "bg-espresso/30"
+                type.active ? "bg-success" : "bg-espresso/30"
               }`}
             />
             <span className="sr-only">
@@ -164,7 +164,7 @@ function VoucherSheetForm({
   if (state.ok) {
     return (
       <div className={`${sheetPadding} space-y-6 text-center`}>
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success">
           <CheckIcon className="h-7 w-7" />
         </span>
         <p className="font-semibold">{state.message}</p>
