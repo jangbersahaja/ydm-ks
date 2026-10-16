@@ -308,6 +308,7 @@ const en = {
     staffPasswordSet: "Password set",
     staffPasswordNotSet: "No password yet",
     staffPasswordInvalid: "Staff password must be 6 to 100 characters.",
+    programSettingsTab: "Program",
     purchaseTitle: "Record a purchase",
     purchaseBody:
       "Scan the member QR or enter the phone number, then enter the bill and cups.",
@@ -755,6 +756,7 @@ const ms: Dict = {
     staffPasswordSet: "Kata laluan ditetapkan",
     staffPasswordNotSet: "Belum ada kata laluan",
     staffPasswordInvalid: "Kata laluan kakitangan mesti 6 hingga 100 aksara.",
+    programSettingsTab: "Program",
     purchaseTitle: "Rekod pembelian",
     purchaseBody:
       "Imbas QR ahli atau masukkan nombor telefon, kemudian masukkan bil dan cawan.",
