@@ -406,10 +406,9 @@ const en = {
     voucherDaysInvalid: "Valid days must be a whole number from 1 to 3650.",
   },
   purchaseAlert: {
-    title: "Purchase recorded",
+    headline: "Congratulations, you have collected {points} points!",
     amountPaid: "Amount paid",
     discount: "Voucher discount",
-    pointsEarned: "Points earned",
     firstVisitBonus: "First visit bonus",
     freeDrinksEarned: "Free drinks earned",
     balance: "Your points",
@@ -828,10 +827,9 @@ const ms: Dict = {
     voucherDaysInvalid: "Hari sah mesti nombor bulat 1 hingga 3650.",
   },
   purchaseAlert: {
-    title: "Pembelian direkodkan",
+    headline: "Tahniah, anda telah mengumpul {points} mata!",
     amountPaid: "Jumlah dibayar",
     discount: "Diskaun baucar",
-    pointsEarned: "Mata diperoleh",
     firstVisitBonus: "Bonus lawatan pertama",
     freeDrinksEarned: "Minuman percuma diperoleh",
     balance: "Mata anda",

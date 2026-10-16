@@ -7,12 +7,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const POLL_MS = 5000;
+const COUNT_UP_MS = 800;
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 export type PurchaseAlertLabels = {
-  title: string;
+  headline: string;
   amountPaid: string;
   discount: string;
-  pointsEarned: string;
   firstVisitBonus: string;
   freeDrinksEarned: string;
   balance: string;
@@ -86,7 +90,7 @@ export function PurchaseAlert({
     <BottomSheet open={alert !== null} onClose={close} dismissible={false}>
       {alert ? (
         <div className="space-y-5 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
-          <p className="text-lg font-semibold">{labels.title}</p>
+          <PointsHighlight points={alert.points} headline={labels.headline} />
 
           <dl className="space-y-2 rounded-2xl bg-cream p-4 text-sm">
             <Row
@@ -99,7 +103,6 @@ export function PurchaseAlert({
                 value={`- ${formatRM(alert.discountCents)}`}
               />
             ) : null}
-            <Row label={labels.pointsEarned} value={`+${alert.points}`} />
             {alert.bonus > 0 ? (
               <Row label={labels.firstVisitBonus} value={`+${alert.bonus}`} />
             ) : null}
@@ -128,6 +131,37 @@ export function PurchaseAlert({
         </div>
       ) : null}
     </BottomSheet>
+  );
+}
+
+function PointsHighlight({
+  points,
+  headline,
+}: {
+  points: number;
+  headline: string;
+}) {
+  const [shown, setShown] = useState(() =>
+    prefersReducedMotion() ? points : 0,
+  );
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const start = performance.now();
+    let frame = 0;
+    function tick(now: number) {
+      const progress = Math.min(1, (now - start) / COUNT_UP_MS);
+      setShown(Math.round(points * progress));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    }
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [points]);
+
+  return (
+    <p className="rounded-2xl bg-roast/10 p-5 text-center text-2xl font-bold leading-snug text-roast motion-safe:animate-[points-pop_500ms_ease-out]">
+      {headline.replace("{points}", String(shown))}
+    </p>
   );
 }
 
