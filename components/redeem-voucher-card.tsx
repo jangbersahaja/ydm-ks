@@ -150,7 +150,7 @@ function RedeemSheetBody({
         <p className="text-lg font-semibold">{labels.confirmTitle}</p>
       </SheetHeader>
 
-      <div className="flex items-center gap-4 rounded-2xl bg-cream p-4">
+      <div className="flex items-center gap-4 border-y border-espresso/10 py-4">
         <IconTile>
           <VoucherKindIcon kind={kind} className="h-5 w-5" />
         </IconTile>

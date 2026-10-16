@@ -89,10 +89,10 @@ export function PurchaseAlert({
   return (
     <BottomSheet open={alert !== null} onClose={close} dismissible={false}>
       {alert ? (
-        <div className="space-y-5 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+        <div className="space-y-6 p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
           <PointsHighlight points={alert.points} headline={labels.headline} />
 
-          <dl className="space-y-2 rounded-2xl bg-cream p-4 text-sm">
+          <dl className="divide-y divide-espresso/10 border-y border-espresso/10 text-sm">
             <Row
               label={labels.amountPaid}
               value={formatRM(alert.amountCents - alert.discountCents)}
@@ -159,7 +159,7 @@ function PointsHighlight({
   }, [points]);
 
   return (
-    <p className="rounded-2xl bg-roast/10 p-5 text-center text-2xl font-bold leading-snug text-roast motion-safe:animate-[points-pop_500ms_ease-out]">
+    <p className="text-center text-4xl font-extrabold leading-tight text-roast tabular-nums motion-safe:animate-[points-pop_500ms_ease-out]">
       {headline.replace("{points}", String(shown))}
     </p>
   );
@@ -167,8 +167,8 @@ function PointsHighlight({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-espresso/70">{label}</dt>
+    <div className="flex justify-between gap-4 py-2.5">
+      <dt className="text-muted">{label}</dt>
       <dd className="min-w-0 break-all text-right font-semibold tabular-nums">
         {value}
       </dd>

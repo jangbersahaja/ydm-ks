@@ -130,7 +130,7 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
             {selected.qr}
 
             <div className="w-full space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-espresso/55">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted">
                 {labels.voucherCode}
               </p>
               <p className="break-all font-mono text-2xl font-bold tracking-wider">
@@ -138,7 +138,7 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
               </p>
             </div>
 
-            <div className="space-y-1 text-sm text-espresso/70">
+            <div className="space-y-1 text-sm text-muted">
               <p>{selected.validity}</p>
               <p>{selected.issued}</p>
             </div>
