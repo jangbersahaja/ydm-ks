@@ -292,6 +292,7 @@ async function savePurchase(
           value: redemptions.value,
           status: redemptions.status,
           expiresAt: redemptions.expiresAt,
+          minSpendCents: redemptions.minSpendCents,
         })
         .from(redemptions)
         .where(eq(redemptions.code, voucherCode))
@@ -300,6 +301,12 @@ async function savePurchase(
       if (!voucher) return { error: t.admin.voucherNotFound };
       const problem = voucherProblem(voucher, customer.id, now);
       if (problem) return { error: voucherProblemMessage(t, problem) };
+      if (voucher.minSpendCents !== null && amountCents < voucher.minSpendCents)
+        return {
+          error: t.admin.errors.voucherMinSpend(
+            (voucher.minSpendCents / 100).toFixed(2),
+          ),
+        };
       if (isPricedFreeItemKind(voucher.kind)) {
         const drink = moneyToCents(
           t.admin.errors.drinkPrice,
@@ -508,6 +515,18 @@ export async function saveVoucherTypeAction(
     validDays = days;
   }
 
+  const minSpendInput = text(formData, "minSpend").trim();
+  let minSpendCents: number | null = null;
+  if (minSpendInput) {
+    const minSpend = Number(minSpendInput);
+    if (!Number.isFinite(minSpend) || minSpend <= 0 || minSpend > 1000)
+      return fail(t.admin.voucherMinSpendInvalid);
+    minSpendCents = Math.round(minSpend * 100);
+  }
+
+  const terms = text(formData, "terms").trim();
+  if (terms.length > 1000) return fail(t.admin.voucherTermsTooLong);
+
   const active = text(formData, "active") === "on";
 
   // Only one active cups voucher, because it defines the cups threshold.
@@ -530,6 +549,8 @@ export async function saveVoucherTypeAction(
     trigger,
     triggerCount,
     validDays,
+    minSpendCents,
+    terms: terms || null,
     active,
   };
 

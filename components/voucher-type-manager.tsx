@@ -37,6 +37,8 @@ export type VoucherManagerLabels = Pick<
   | "fieldPointsCost"
   | "fieldTriggerCount"
   | "fieldValidDays"
+  | "fieldMinSpend"
+  | "fieldTerms"
   | "fieldActive"
   | "kinds"
   | "triggers"
@@ -321,6 +323,30 @@ function VoucherFields({
           max={3650}
           step={1}
           defaultValue={type?.validDays ?? ""}
+          className={inputClass}
+        />
+      </Field>
+
+      <Field label={labels.fieldMinSpend}>
+        <input
+          name="minSpend"
+          type="number"
+          inputMode="decimal"
+          min={0}
+          step="0.01"
+          defaultValue={
+            type?.minSpendCents ? (type.minSpendCents / 100).toFixed(2) : ""
+          }
+          className={inputClass}
+        />
+      </Field>
+
+      <Field label={labels.fieldTerms}>
+        <textarea
+          name="terms"
+          rows={4}
+          maxLength={1000}
+          defaultValue={type?.terms ?? ""}
           className={inputClass}
         />
       </Field>

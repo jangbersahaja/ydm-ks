@@ -119,6 +119,8 @@ export const voucherTypes = pgTable("voucher_types", {
   trigger: text("trigger").notNull(), // points_redeem | registration | birthday | cups
   triggerCount: integer("trigger_count"),
   validDays: integer("valid_days"),
+  minSpendCents: integer("min_spend_cents"),
+  terms: text("terms"),
   active: boolean("active").notNull().default(true),
   sortOrder: integer("sort_order").notNull().default(0),
 });
@@ -134,6 +136,11 @@ export const redemptions = pgTable("redemptions", {
   kind: text("kind").notNull().default("free_drink"),
   value: integer("value").notNull().default(0),
   costPoints: integer("cost_points").notNull().default(0),
+  // Rules copied at issue time, so later admin edits do not change issued vouchers.
+  minSpendCents: integer("min_spend_cents"),
+  terms: text("terms"),
+  trigger: text("trigger"),
+  triggerCount: integer("trigger_count"),
   // Prevents auto-issuing the same voucher twice (registration, birthday year).
   awardKey: text("award_key").unique(),
   status: text("status").notNull().default("issued"), // issued | redeemed

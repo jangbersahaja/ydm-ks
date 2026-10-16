@@ -4,6 +4,7 @@ import { SectionHeader } from "@/components/brand/section-header";
 import { SegmentedControl } from "@/components/brand/segmented-control";
 import { QrCode } from "@/components/qr-code";
 import { RedeemVoucherCard } from "@/components/redeem-voucher-card";
+import type { VoucherDetailsLabels } from "@/components/voucher-details";
 import {
   type ActiveVoucherView,
   type PastVoucherView,
@@ -59,6 +60,16 @@ export default async function RewardsPage({
   const isActiveVoucher = (voucher: (typeof vouchers)[number]) =>
     voucher.status === "issued" && !voucher.isExpired;
 
+  const claimText = (voucher: (typeof vouchers)[number]) => {
+    if (voucher.trigger === "points_redeem")
+      return t.rewards.claimPoints(voucher.costPoints);
+    if (voucher.trigger === "registration") return t.rewards.claimRegistration;
+    if (voucher.trigger === "birthday") return t.rewards.claimBirthday;
+    if (voucher.trigger === "cups" && voucher.triggerCount)
+      return t.rewards.claimCups(voucher.triggerCount);
+    return t.rewards.claimIssued;
+  };
+
   const activeVouchers: ActiveVoucherView[] = vouchers
     .filter(isActiveVoucher)
     .map((voucher) => ({
@@ -71,6 +82,11 @@ export default async function RewardsPage({
         ? t.rewards.expires(formatDate(voucher.expiresAt, locale))
         : t.rewards.noExpiry,
       issued: t.rewards.issuedOn(formatDate(voucher.createdAt, locale)),
+      minSpend: voucher.minSpendCents
+        ? t.rewards.minSpendAmount((voucher.minSpendCents / 100).toFixed(2))
+        : t.rewards.noMinSpend,
+      claim: claimText(voucher),
+      terms: voucher.terms,
       qr: <QrCode value={voucher.code} size={240} />,
     }));
 
@@ -90,6 +106,16 @@ export default async function RewardsPage({
             ),
     }));
 
+  const detailLabels: VoucherDetailsLabels = {
+    validityTitle: t.rewards.validityTitle,
+    minSpendTitle: t.rewards.minSpendTitle,
+    claimTitle: t.rewards.claimTitle,
+    termsTitle: t.rewards.termsTitle,
+    fullTerms: t.rewards.fullTerms,
+    standardTerms: t.rewards.standardTerms,
+    useAtCounter: t.rewards.useAtCounter,
+  };
+
   const voucherLabels = {
     activeTitle: t.rewards.activeTitle,
     pastTitle: t.rewards.pastTitle,
@@ -98,6 +124,7 @@ export default async function RewardsPage({
     closeVoucher: t.rewards.closeVoucher,
     voucherCode: t.rewards.voucherCode,
     showMore: t.rewards.showMore,
+    ...detailLabels,
   };
 
   const redeemLabels = {
@@ -107,6 +134,7 @@ export default async function RewardsPage({
     cancel: t.rewards.cancelRedeem,
     close: t.rewards.closeVoucher,
     viewVouchers: t.rewards.viewVouchers,
+    details: detailLabels,
   };
 
   return (
@@ -172,6 +200,20 @@ export default async function RewardsPage({
                     }
                     confirmText={t.rewards.confirmRedeemBody(cost)}
                     balanceAfterText={t.rewards.balanceAfter(balance - cost)}
+                    validity={
+                      type.validDays
+                        ? t.rewards.validForDays(type.validDays)
+                        : t.rewards.noExpiry
+                    }
+                    minSpend={
+                      type.minSpendCents
+                        ? t.rewards.minSpendAmount(
+                            (type.minSpendCents / 100).toFixed(2),
+                          )
+                        : t.rewards.noMinSpend
+                    }
+                    claim={t.rewards.claimPoints(cost)}
+                    terms={type.terms}
                     labels={redeemLabels}
                   />
                 );

@@ -25,6 +25,8 @@ export default async function AdminVouchersPage() {
     fieldPointsCost: t.admin.fieldPointsCost,
     fieldTriggerCount: t.admin.fieldTriggerCount,
     fieldValidDays: t.admin.fieldValidDays,
+    fieldMinSpend: t.admin.fieldMinSpend,
+    fieldTerms: t.admin.fieldTerms,
     fieldActive: t.admin.fieldActive,
     kinds: t.admin.kinds,
     triggers: t.admin.triggers,

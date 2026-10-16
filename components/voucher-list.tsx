@@ -8,6 +8,10 @@ import { SectionHeader } from "@/components/brand/section-header";
 import { SheetHeader } from "@/components/brand/sheet-header";
 import { QrCodeIcon, VoucherKindIcon } from "@/components/icons";
 import { buttonSmClass, iconButtonClass } from "@/components/ui";
+import {
+  VoucherDetails,
+  type VoucherDetailsLabels,
+} from "@/components/voucher-details";
 import { type ReactNode, useState } from "react";
 
 export type ActiveVoucherView = {
@@ -18,6 +22,9 @@ export type ActiveVoucherView = {
   code: string;
   validity: string;
   issued: string;
+  minSpend: string;
+  claim: string;
+  terms: string | null;
   qr: ReactNode;
 };
 
@@ -39,7 +46,7 @@ type VoucherListProps = {
     closeVoucher: string;
     voucherCode: string;
     showMore: string;
-  };
+  } & VoucherDetailsLabels;
 };
 
 const PAST_PAGE_SIZE = 5;
@@ -138,10 +145,14 @@ export function VoucherList({ active, past, labels }: VoucherListProps) {
               </p>
             </div>
 
-            <div className="space-y-1 text-sm text-muted">
-              <p>{selected.validity}</p>
-              <p>{selected.issued}</p>
-            </div>
+            <VoucherDetails
+              labels={labels}
+              validity={selected.validity}
+              validityNote={selected.issued}
+              minSpend={selected.minSpend}
+              claim={selected.claim}
+              terms={selected.terms}
+            />
           </div>
         ) : null}
       </BottomSheet>

@@ -76,6 +76,10 @@ export async function issueVoucher(
       kind: type.kind,
       value: type.value,
       costPoints: type.pointsCost ?? 0,
+      minSpendCents: type.minSpendCents,
+      terms: type.terms,
+      trigger: type.trigger,
+      triggerCount: type.triggerCount,
       awardKey,
       expiresAt: type.validDays
         ? new Date(Date.now() + type.validDays * DAY_MS)

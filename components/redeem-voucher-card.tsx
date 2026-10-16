@@ -8,6 +8,10 @@ import { SheetHeader } from "@/components/brand/sheet-header";
 import { ArrowIcon, CheckIcon, VoucherKindIcon } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
 import { buttonClass, iconButtonClass } from "@/components/ui";
+import {
+  VoucherDetails,
+  type VoucherDetailsLabels,
+} from "@/components/voucher-details";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
@@ -18,6 +22,7 @@ type RedeemLabels = {
   cancel: string;
   close: string;
   viewVouchers: string;
+  details: VoucherDetailsLabels;
 };
 
 export type RedeemCardProps = {
@@ -31,6 +36,10 @@ export type RedeemCardProps = {
   notEnoughText: string | null;
   confirmText: string;
   balanceAfterText: string;
+  validity: string;
+  minSpend: string;
+  claim: string;
+  terms: string | null;
   labels: RedeemLabels;
 };
 
@@ -46,6 +55,10 @@ export function RedeemVoucherCard(props: RedeemCardProps) {
     notEnoughText,
     confirmText,
     balanceAfterText,
+    validity,
+    minSpend,
+    claim,
+    terms,
     labels,
   } = props;
   const [open, setOpen] = useState(false);
@@ -90,6 +103,10 @@ export function RedeemVoucherCard(props: RedeemCardProps) {
           description={description}
           confirmText={confirmText}
           balanceAfterText={balanceAfterText}
+          validity={validity}
+          minSpend={minSpend}
+          claim={claim}
+          terms={terms}
           labels={labels}
           onClose={() => setOpen(false)}
         />
@@ -113,6 +130,10 @@ function RedeemSheetBody({
   description,
   confirmText,
   balanceAfterText,
+  validity,
+  minSpend,
+  claim,
+  terms,
   labels,
   onClose,
 }: SheetProps) {
@@ -159,6 +180,14 @@ function RedeemSheetBody({
           <p className="text-sm text-muted">{description}</p>
         </div>
       </div>
+
+      <VoucherDetails
+        labels={labels.details}
+        validity={validity}
+        minSpend={minSpend}
+        claim={claim}
+        terms={terms}
+      />
 
       <input type="hidden" name="voucherTypeId" value={voucherTypeId} />
 
