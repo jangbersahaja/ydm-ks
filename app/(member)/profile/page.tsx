@@ -7,7 +7,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { buttonClass, inputClass } from "@/components/ui";
 import { todayInKL } from "@/lib/birthday";
 import { getCustomer } from "@/lib/db/queries";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatDateOnly } from "@/lib/format";
 import { getT } from "@/lib/i18n";
 import { requireCustomerId } from "@/lib/session";
 import Link from "next/link";
@@ -44,10 +44,7 @@ export default async function ProfilePage() {
               <dt className="text-muted">{t.auth.birthday}</dt>
               <dd className="text-right">
                 <span className="block font-semibold">
-                  {formatDate(
-                    new Date(`${customer.birthday}T00:00:00+08:00`),
-                    locale,
-                  )}
+                  {formatDateOnly(customer.birthday, locale)}
                 </span>
                 <span className="mt-1 block text-xs text-muted">
                   {t.profile.birthdayLocked}

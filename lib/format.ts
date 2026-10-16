@@ -12,6 +12,15 @@ export function formatDate(date: Date, locale: Locale) {
   }).format(date);
 }
 
+export function formatDateOnly(date: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "ms" ? "ms-MY" : "en-MY", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
+}
+
 export function formatDateTime(date: Date, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "ms" ? "ms-MY" : "en-MY", {
     day: "numeric",
